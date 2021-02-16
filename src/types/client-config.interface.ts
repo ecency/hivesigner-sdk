@@ -1,8 +1,8 @@
 export interface ClientConfig {
 	apiURL: string
-	app: any
+	app: string
 	callbackURL: string
-	scope: any[]
+	scope: string[]
 	responseType: string
 	accessToken?: string
 }

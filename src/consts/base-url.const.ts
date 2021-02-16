@@ -1,1 +1,1 @@
-export const BASE_URL = 'https://hivesigner.com';
+export const BASE_URL = 'https://hivesigner.com'

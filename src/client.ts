@@ -1,13 +1,14 @@
 import fetch from 'cross-fetch'
-import { CallbackFunction, ClientConfig } from './types'
+import { CallbackFunction, ClientConfig, LoginOptions, SendResponse } from './types'
 import { BASE_URL } from './consts'
 import { isBrowser } from './utilities'
+import { Operation } from 'dsteem'
 
 export class Client {
 	private apiURL: string
-	private app: any
+	private app: string
 	private callbackURL: string
-	private scope: any[]
+	private scope: string[]
 	private responseType: string
 	private accessToken?: string
 
@@ -32,7 +33,7 @@ export class Client {
 		return this
 	}
 
-	public setApp(app: any): this {
+	public setApp(app: string): this {
 		this.app = app
 		return this
 	}
@@ -52,7 +53,7 @@ export class Client {
 		return this
 	}
 
-	public setScope(scope: any[]): this {
+	public setScope(scope: string[]): this {
 		this.scope = scope
 		return this
 	}
@@ -72,43 +73,50 @@ export class Client {
 		return loginURL
 	}
 
-	public login(options: any): void {
+	public login(options: LoginOptions): void {
 		if (isBrowser()) {
 			// @ts-ignore
 			window.location = this.getLoginURL(options.state)
 		}
 	}
 
-	public me(cb: CallbackFunction): Promise<any> {
+	public me(cb: CallbackFunction): Promise<SendResponse> {
 		return this.send('me', 'POST', {}, cb)
 	}
 
-	public vote(voter: any, author: any, permlink: any, weight: any, cb: CallbackFunction): Promise<any> {
+	public vote(
+		voter: string,
+		author: string,
+		permlink: string,
+		weight: string | number,
+		cb: CallbackFunction
+	): Promise<SendResponse> {
 		const params = {
 			voter,
 			author,
 			permlink,
 			weight,
-		};
+		}
 		return this.broadcast([['vote', params]], cb)
 	}
 
-	public broadcast(operations: any, cb: CallbackFunction): Promise<any> {
+	public broadcast(operations: Operation[], cb: CallbackFunction): Promise<SendResponse> {
 		return this.send('broadcast', 'POST', { operations }, cb)
 	}
 
 	public comment(
-		parentAuthor: any,
-		parentPermlink: any,
-		author: any,
-		permlink: any,
-		title: any,
+		parentAuthor: string,
+		parentPermlink: string,
+		author: string,
+		permlink: string,
+		title: string,
 		body: any,
-		jsonMetadata: any, cb: CallbackFunction
-	): Promise<any> {
-		let json = jsonMetadata;
-		if (!(typeof jsonMetadata === 'string' || jsonMetadata instanceof String)) {
-			json = JSON.stringify(jsonMetadata);
+		jsonMetadata: string,
+		cb: CallbackFunction
+	): Promise<SendResponse> {
+		let json = jsonMetadata
+		if (typeof jsonMetadata !== 'string') {
+			json = JSON.stringify(jsonMetadata)
 		}
 		const params = {
 			parent_author: parentAuthor,
@@ -122,7 +130,7 @@ export class Client {
 		return this.broadcast([['comment', params]], cb)
 	}
 
-	public deleteComment(author: any, permlink: any, cb: CallbackFunction): Promise<any> {
+	public deleteComment(author: string, permlink: string, cb: CallbackFunction): Promise<SendResponse> {
 		const params = {
 			author,
 			permlink
@@ -133,10 +141,10 @@ export class Client {
 	public customJson(
 		requiredAuths: any,
 		requiredPostingAuths: any,
-		id: any,
+		id: string,
 		json: any,
 		cb: CallbackFunction
-	): Promise<any> {
+	): Promise<SendResponse> {
 		const params = {
 			required_auths: requiredAuths,
 			required_posting_auths: requiredPostingAuths,
@@ -146,33 +154,33 @@ export class Client {
 		return this.broadcast([['custom_json', params]], cb)
 	}
 
-	public reblog(account: any, author: any, permlink: any, cb: CallbackFunction): Promise<any> {
+	public reblog(account: string, author: string, permlink: string, cb: CallbackFunction): Promise<SendResponse> {
 		const json = ['reblog', { account, author, permlink }]
 		return this.customJson([], [account], 'follow', JSON.stringify(json), cb)
 	}
 
-	public follow(follower: any, following: any, cb: CallbackFunction): Promise<any> {
-		const json = ['follow', { follower, following, what: ['blog'] }];
-		return this.customJson([], [follower], 'follow', JSON.stringify(json), cb);
+	public follow(follower: string, following: string, cb: CallbackFunction): Promise<SendResponse> {
+		const json = ['follow', { follower, following, what: ['blog'] }]
+		return this.customJson([], [follower], 'follow', JSON.stringify(json), cb)
 	}
 
-	public unfollow(unfollower: any, unfollowing: any, cb: CallbackFunction): Promise<any> {
-		const json = ['follow', { follower: unfollower, following: unfollowing, what: <any[]>[] }]
+	public unfollow(unfollower: string, unfollowing: string, cb: CallbackFunction): Promise<SendResponse> {
+		const json = ['follow', { follower: unfollower, following: unfollowing, what: <string[]>[] }]
 		return this.customJson([], [unfollower], 'follow', JSON.stringify(json), cb)
 	}
 
-	public ignore(follower: any, following: any, cb: CallbackFunction): Promise<any> {
+	public ignore(follower: string, following: string, cb: CallbackFunction): Promise<SendResponse> {
 		const json = ['follow', { follower, following, what: ['ignore'] }]
 		return this.customJson([], [follower], 'follow', JSON.stringify(json), cb)
 	}
 
 	public claimRewardBalance(
-		account: any,
-		rewardHive: any,
-		rewardHbd: any,
-		rewardVests: any,
+		account: string,
+		rewardHive: string,
+		rewardHbd: string,
+		rewardVests: string,
 		cb: CallbackFunction
-	): Promise<Response | any> {
+	): Promise<SendResponse> {
 		const params = {
 			account,
 			reward_hive: rewardHive,
@@ -183,17 +191,17 @@ export class Client {
 	}
 
 	public async revokeToken(cb: CallbackFunction): Promise<Client> {
-		await this.send('oauth2/token/revoke', 'POST', { token: this.accessToken }, cb);
-		return this.removeAccessToken();
+		await this.send('oauth2/token/revoke', 'POST', { token: this.accessToken }, cb)
+		return this.removeAccessToken()
 	}
 
-	public updateUserMetadata(metadata = {}, cb: CallbackFunction): Promise<any> {
-		console.warn('The function "updateUserMetadata" is deprecated.');
-		return this.send('me', 'PUT', { user_metadata: metadata }, cb);
+	public updateUserMetadata(metadata = {}, cb: CallbackFunction): Promise<SendResponse> {
+		console.warn('The function "updateUserMetadata" is deprecated.')
+		return this.send('me', 'PUT', { user_metadata: metadata }, cb)
 	}
 
-	private async send(route: string, method: string, body: any, cb: CallbackFunction): Promise<any> {
-		const url = `${this.apiURL}/api/${route}`;
+	private async send(route: string, method: string, body: any, cb: CallbackFunction): Promise<SendResponse> {
+		const url = `${this.apiURL}/api/${route}`
 
 		const response = await fetch(url, {
 			method,
@@ -204,7 +212,7 @@ export class Client {
 			},
 			body: JSON.stringify(body),
 		})
-		const json = await response.json();
+		const json = await response.json()
 
 		if (json.error || response.status !== 200) {
 			cb(response, null)

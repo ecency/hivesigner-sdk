@@ -1,7 +1,11 @@
 import { BASE_URL } from '../consts'
 import { SignErrors } from '../types'
 
-export function sign(name: string, params: Record<string, any>, redirectUri: string): string | SignErrors {
+export function sign(
+	name: string,
+	params: Record<string, string | number | boolean>,
+	redirectUri: string
+): string | SignErrors {
 	console.warn('The function "sign" is deprecated.')
 	if (typeof name !== 'string' || typeof params !== 'object') {
 		return {
