@@ -1,3 +1,3 @@
-export function isBrowserUtil(): boolean {
+export function isBrowser(): boolean {
 	return typeof window !== 'undefined' && !!window
 }
