@@ -1,4 +1,5 @@
-import { ClientConfig } from './types'
+import fetch from 'cross-fetch'
+import { CallbackFunction, ClientConfig } from './types'
 import { BASE_URL } from './consts'
 import { isBrowser } from './utilities'
 
@@ -73,15 +74,16 @@ export class Client {
 
 	public login(options: any): void {
 		if (isBrowser()) {
+			// @ts-ignore
 			window.location = this.getLoginURL(options.state)
 		}
 	}
 
-	public me(cb: Function): Promise<Response> {
+	public me(cb: CallbackFunction): Promise<any> {
 		return this.send('me', 'POST', {}, cb)
 	}
 
-	public vote(voter: any, author: any, permlink: any, weight: any, cb: Function): Promise<Response> {
+	public vote(voter: any, author: any, permlink: any, weight: any, cb: CallbackFunction): Promise<any> {
 		const params = {
 			voter,
 			author,
@@ -91,7 +93,7 @@ export class Client {
 		return this.broadcast([['vote', params]], cb)
 	}
 
-	public broadcast(operations: any, cb: Function): Promise<Response> {
+	public broadcast(operations: any, cb: CallbackFunction): Promise<any> {
 		return this.send('broadcast', 'POST', { operations }, cb)
 	}
 
@@ -102,8 +104,8 @@ export class Client {
 		permlink: any,
 		title: any,
 		body: any,
-		jsonMetadata: any, cb: Function
-	): Promise<Response> {
+		jsonMetadata: any, cb: CallbackFunction
+	): Promise<any> {
 		let json = jsonMetadata;
 		if (!(typeof jsonMetadata === 'string' || jsonMetadata instanceof String)) {
 			json = JSON.stringify(jsonMetadata);
@@ -120,7 +122,7 @@ export class Client {
 		return this.broadcast([['comment', params]], cb)
 	}
 
-	public deleteComment(author: any, permlink: any, cb: Function): Promise<Response> {
+	public deleteComment(author: any, permlink: any, cb: CallbackFunction): Promise<any> {
 		const params = {
 			author,
 			permlink
@@ -133,8 +135,8 @@ export class Client {
 		requiredPostingAuths: any,
 		id: any,
 		json: any,
-		cb: Function
-	): Promise<Response> {
+		cb: CallbackFunction
+	): Promise<any> {
 		const params = {
 			required_auths: requiredAuths,
 			required_posting_auths: requiredPostingAuths,
@@ -144,22 +146,22 @@ export class Client {
 		return this.broadcast([['custom_json', params]], cb)
 	}
 
-	public reblog(account: any, author: any, permlink: any, cb: Function): Promise<Response> {
+	public reblog(account: any, author: any, permlink: any, cb: CallbackFunction): Promise<any> {
 		const json = ['reblog', { account, author, permlink }]
 		return this.customJson([], [account], 'follow', JSON.stringify(json), cb)
 	}
 
-	public follow(follower: any, following: any, cb: Function): Promise<Response> {
+	public follow(follower: any, following: any, cb: CallbackFunction): Promise<any> {
 		const json = ['follow', { follower, following, what: ['blog'] }];
 		return this.customJson([], [follower], 'follow', JSON.stringify(json), cb);
 	}
 
-	public unfollow(unfollower: any, unfollowing: any, cb: Function): Promise<Response> {
-		const json = ['follow', { follower: unfollower, following: unfollowing, what: [] }]
+	public unfollow(unfollower: any, unfollowing: any, cb: CallbackFunction): Promise<any> {
+		const json = ['follow', { follower: unfollower, following: unfollowing, what: <any[]>[] }]
 		return this.customJson([], [unfollower], 'follow', JSON.stringify(json), cb)
 	}
 
-	public ignore(follower: any, following: any, cb: Function): Promise<Response> {
+	public ignore(follower: any, following: any, cb: CallbackFunction): Promise<any> {
 		const json = ['follow', { follower, following, what: ['ignore'] }]
 		return this.customJson([], [follower], 'follow', JSON.stringify(json), cb)
 	}
@@ -169,8 +171,8 @@ export class Client {
 		rewardHive: any,
 		rewardHbd: any,
 		rewardVests: any,
-		cb: Function
-	): Promise<Response> {
+		cb: CallbackFunction
+	): Promise<Response | any> {
 		const params = {
 			account,
 			reward_hive: rewardHive,
@@ -180,17 +182,17 @@ export class Client {
 		return this.broadcast([['claim_reward_balance', params]], cb)
 	}
 
-	public async revokeToken(cb: Function): Promise<Client> {
+	public async revokeToken(cb: CallbackFunction): Promise<Client> {
 		await this.send('oauth2/token/revoke', 'POST', { token: this.accessToken }, cb);
 		return this.removeAccessToken();
 	}
 
-	public updateUserMetadata(metadata = {}, cb: Function): Promise<Response> {
+	public updateUserMetadata(metadata = {}, cb: CallbackFunction): Promise<any> {
 		console.warn('The function "updateUserMetadata" is deprecated.');
 		return this.send('me', 'PUT', { user_metadata: metadata }, cb);
 	}
 
-	private async send(route: string, method: string, body: any, cb: Function): Promise<Response> {
+	private async send(route: string, method: string, body: any, cb: CallbackFunction): Promise<any> {
 		const url = `${this.apiURL}/api/${route}`;
 
 		const response = await fetch(url, {

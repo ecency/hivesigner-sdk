@@ -21,9 +21,12 @@ module.exports = {
     ],
     resolve: {
         extensions: ['.tsx', '.ts', '.js'],
+        fallback: {
+            url: false
+        }
     },
     output: {
         filename: 'hivesigner.min.js',
         path: path.resolve(__dirname, 'dist'),
-    },
+    }
 };
