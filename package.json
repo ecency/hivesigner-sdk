@@ -1,0 +1,26 @@
+{
+  "name": "hivesigner-sdk",
+  "version": "1.0.0",
+  "description": "Hivesigner SDK",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --mode=production"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ecency/hivesigner-sdk.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ecency/hivesigner-sdk/issues"
+  },
+  "homepage": "https://github.com/ecency/hivesigner-sdk#readme",
+  "devDependencies": {
+    "@types/node": "^14.14.28",
+    "ts-loader": "^8.0.17",
+    "typescript": "^4.1.5",
+    "webpack": "^5.22.0",
+    "webpack-cli": "^4.5.0"
+  }
+}
