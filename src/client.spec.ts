@@ -410,4 +410,18 @@ describe('Client', function () {
 		})
 		expect(response).toBeTruthy()
 	})
+
+	it('should send request and return promise on me call', async function () {
+		const response = await instance.me()
+		expect(crossFetch.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/me`,{
+			method: 'POST',
+			headers: {
+				Accept: 'application/json, text/plain, */*',
+				'Content-Type': 'application/json',
+				Authorization: 'test-access-token',
+			},
+			body: JSON.stringify({})
+		})
+		expect(response).toBeTruthy()
+	})
 })
