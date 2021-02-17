@@ -200,7 +200,10 @@ export class Client {
 		return this.send('me', 'PUT', { user_metadata: metadata }, cb)
 	}
 
-	private async send(route: string, method: string, body: any, cb: CallbackFunction): Promise<SendResponse> {
+	private async send(route: string, method: string, body: any): Promise<SendResponse>
+	private async send(route: string, method: string, body: any, cb: CallbackFunction): Promise<SendResponse>
+
+	private async send(route: string, method: string, body: any, cb?: CallbackFunction): Promise<SendResponse> {
 		const url = `${this.apiURL}/api/${route}`
 
 		const response = await fetch(url, {
@@ -215,8 +218,12 @@ export class Client {
 		const json = await response.json()
 
 		if (json.error || response.status !== 200) {
-			cb(response, null)
-		}
+			if (cb) {
+				cb(response, null)
+			} else {
+				throw response
+			}
+ 		}
 
 		if (!cb) {
 			return response
