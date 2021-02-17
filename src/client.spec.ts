@@ -203,4 +203,25 @@ describe('Client', function () {
 		})
 		expect(response).toBeTruthy()
 	})
+
+	it('should send request and return promise on custom json call', async function () {
+		const response = await instance.customJson('', '', '', {})
+		expect(crossFetch.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/broadcast`,{
+			method: 'POST',
+			headers: {
+				Accept: 'application/json, text/plain, */*',
+				'Content-Type': 'application/json',
+				Authorization: 'test-access-token',
+			},
+			body: JSON.stringify({
+				operations: [['custom_json', {
+					required_auths: '',
+					required_posting_auths: '',
+					id: '',
+					json: {}
+				}]]
+			})
+		})
+		expect(response).toBeTruthy()
+	})
 })
