@@ -7,10 +7,10 @@ export function sign(
 	redirectUri: string
 ): string | SignErrors {
 	console.warn('The function "sign" is deprecated.')
-	if (typeof name !== 'string' || typeof params !== 'object') {
+	if (typeof name !== 'string' || typeof params !== 'object' || params === null) {
 		return {
 			error: 'invalid_request',
-			error_description: 'Request has an invalid format',
+			error_description: 'Request has an invalid format'
 		}
 	}
 	let url = `${BASE_URL}/sign/${name}?`
