@@ -164,8 +164,26 @@ describe('Client', function () {
 				'Content-Type': 'application/json',
 				Authorization: 'test-access-token',
 			},
-			body: JSON.stringify({ user_metadata: { username: '' }})
+			body: JSON.stringify({ user_metadata: { username: '' } })
 		})
 		expect(response).toBeTruthy()
+	})
+
+	it('should send request and return client instance on revokeToken call', async function () {
+		const response = await instance.revokeToken()
+		expect(crossFetch.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/oauth2/token/revoke`,{
+			method: 'POST',
+			headers: {
+				Accept: 'application/json, text/plain, */*',
+				'Content-Type': 'application/json',
+				Authorization: 'test-access-token',
+			},
+			body: JSON.stringify({ token: 'test-access-token' })
+		})
+		expect(response).toBeInstanceOf(Client)
+	})
+
+	it('should ', function () {
+		
 	})
 })
