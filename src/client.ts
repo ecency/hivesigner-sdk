@@ -260,9 +260,9 @@ export class Client {
 		return this.send('me', 'PUT', { user_metadata: metadata }, cb)
 	}
 
-	private async send(route: string, method: string, body: any): Promise<SendResponse>
-	private async send(route: string, method: string, body: any, cb: CallbackFunction): Promise<SendResponse>
-	private async send(route: string, method: string, body: any, cb?: CallbackFunction): Promise<SendResponse> {
+	public async send(route: string, method: string, body: any): Promise<SendResponse>
+	public async send(route: string, method: string, body: any, cb: CallbackFunction): Promise<SendResponse>
+	public async send(route: string, method: string, body: any, cb?: CallbackFunction): Promise<SendResponse> {
 		const url = `${this.apiURL}/api/${route}`
 
 		const response = await fetch(url, {
@@ -291,9 +291,9 @@ export class Client {
 		return cb(null, response)
 	}
 
-	private broadcast(operations: Operation[]): Promise<SendResponse>
-	private broadcast(operations: Operation[], cb: CallbackFunction): Promise<SendResponse>
-	private broadcast(operations: Operation[], cb?: CallbackFunction): Promise<SendResponse> {
+	public broadcast(operations: Operation[]): Promise<SendResponse>
+	public broadcast(operations: Operation[], cb: CallbackFunction): Promise<SendResponse>
+	public broadcast(operations: Operation[], cb?: CallbackFunction): Promise<SendResponse> {
 		return this.send('broadcast', 'POST', { operations }, cb)
 	}
 }

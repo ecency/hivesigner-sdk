@@ -1,19 +1,22 @@
 import { Client } from './client'
 import { ClientConfig } from './types'
-import { BASE_URL } from './consts'
+import { API_URL, BASE_URL } from './consts'
 import * as utilities from './utilities'
+import * as crossFetch from 'cross-fetch'
 
 jest.mock('./utilities')
+jest.mock('cross-fetch')
 
 describe('Client', function () {
 	let instance: Client
 	let isBrowserMock: jest.Mock
+	let crossFetchMock: jest.Mock
 
 	beforeEach(() => {
 		instance = new Client({
 			app: 'test-app',
 			callbackURL: 'test-callback',
-			apiURL: 'test-api-url',
+			apiURL: API_URL,
 			accessToken: 'test-access-token',
 			responseType: 'test-response-type',
 			scope: ['test-scope-item'],
@@ -21,6 +24,12 @@ describe('Client', function () {
 
 		isBrowserMock = utilities.isBrowser as jest.Mock
 		isBrowserMock.mockReturnValue(false)
+
+		crossFetchMock = crossFetch.fetch as jest.Mock
+		crossFetchMock.mockImplementation(async (...args: any[]) => ({
+			status: 200,
+			json: async () => ({ error: '' })
+		}))
 	})
 
 	it('should create instance', function () {
@@ -83,5 +92,52 @@ describe('Client', function () {
 		instance.login({ state: '' })
 		expect(window.location)
 			.toBe(`${BASE_URL}/oauth2/authorize?client_id=test-app&redirect_uri=${encodeURIComponent(instance.callbackURL)}&scope=test-scope-item`)
+	})
+
+	it('should return promise resolve on send call', async function () {
+		const response = await instance.send('me', 'POST', {})
+		expect(crossFetch.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/me`,{
+			method: 'POST',
+			headers: {
+				Accept: 'application/json, text/plain, */*',
+				'Content-Type': 'application/json',
+				Authorization: 'test-access-token',
+			},
+			body: JSON.stringify({})
+		})
+		expect(await response).toBeTruthy()
+	})
+
+	it('should return promise error on send call with if 200 status', async function () {
+		try {
+			crossFetchMock.mockImplementation(async (...args: any[]) => ({
+				status: 'not_200_OK',
+				json: async () => ({ error: '' })
+			}))
+			const response = await instance.send('me', 'POST', {})
+			// Test should be broken
+			console.error('Client.send not threw error')
+			expect(true).toBe(false)
+		} catch (failureResponse) {
+			expect(failureResponse).toBeTruthy()
+			expect(failureResponse.status).toBe('not_200_OK')
+		}
+	})
+
+	it('should return promise error on send call if has json error', async function () {
+		try {
+			crossFetchMock.mockImplementation(async (...args: any[]) => ({
+				status: 200,
+				json: async () => ({ error: 'I have an error' })
+			}))
+			const response = await instance.send('me', 'POST', {})
+			// Test should be broken
+			console.error('Client.send not threw error')
+			expect(true).toBe(false)
+		} catch (failureResponse) {
+			expect(failureResponse).toBeTruthy()
+			expect((await failureResponse.json()).error).toBe('I have an error')
+			expect(failureResponse.status).toBe(200)
+		}
 	})
 })
