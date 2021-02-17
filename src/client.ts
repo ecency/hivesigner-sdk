@@ -117,7 +117,7 @@ export class Client {
 		permlink: string,
 		title: string,
 		body: any,
-		jsonMetadata: string
+		jsonMetadata: any
 	): Promise<SendResponse>
 	public comment(
 		parentAuthor: string,
@@ -126,7 +126,7 @@ export class Client {
 		permlink: string,
 		title: string,
 		body: any,
-		jsonMetadata: string,
+		jsonMetadata: any,
 		cb: CallbackFunction
 	): Promise<SendResponse>
 	public comment(
@@ -136,7 +136,7 @@ export class Client {
 		permlink: string,
 		title: string,
 		body: any,
-		jsonMetadata: string,
+		jsonMetadata: any,
 		cb?: CallbackFunction
 	): Promise<SendResponse> {
 		let json = jsonMetadata

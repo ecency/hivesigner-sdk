@@ -325,7 +325,7 @@ describe('Client', function () {
 		expect(response).toBeTruthy()
 	})
 
-	it('should send request and return promise on delete call', async function () {
+	it('should send request and return promise on deleteComment call', async function () {
 		const response = await instance.deleteComment('', '')
 		expect(crossFetch.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/broadcast`,{
 			method: 'POST',
@@ -338,6 +338,52 @@ describe('Client', function () {
 				operations: [['delete_comment', {
 					author: '',
 					permlink: ''
+				}]]
+			})
+		})
+		expect(response).toBeTruthy()
+	})
+
+	it('should send request and return promise on comment call', async function () {
+		let response = await instance.comment('', '', '', '', '', {}, {})
+		expect(crossFetch.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/broadcast`,{
+			method: 'POST',
+			headers: {
+				Accept: 'application/json, text/plain, */*',
+				'Content-Type': 'application/json',
+				Authorization: 'test-access-token',
+			},
+			body: JSON.stringify({
+				operations: [['comment', {
+					parent_author: '',
+					parent_permlink: '',
+					author: '',
+					permlink: '',
+					title: '',
+					body: {},
+					json_metadata: JSON.stringify({})
+				}]]
+			})
+		})
+		expect(response).toBeTruthy()
+
+		response = await instance.comment('', '', '', '', '', {}, 'meta')
+		expect(crossFetch.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/broadcast`,{
+			method: 'POST',
+			headers: {
+				Accept: 'application/json, text/plain, */*',
+				'Content-Type': 'application/json',
+				Authorization: 'test-access-token',
+			},
+			body: JSON.stringify({
+				operations: [['comment', {
+					parent_author: '',
+					parent_permlink: '',
+					author: '',
+					permlink: '',
+					title: '',
+					body: {},
+					json_metadata: 'meta'
 				}]]
 			})
 		})
