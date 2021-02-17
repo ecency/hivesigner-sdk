@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Hivesigner SDK",
   "main": "./src/index.ts",
-  "type": "module",
   "scripts": {
     "build": "webpack --mode=production",
     "test": "npx jest",
