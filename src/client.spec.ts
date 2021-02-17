@@ -183,7 +183,24 @@ describe('Client', function () {
 		expect(response).toBeInstanceOf(Client)
 	})
 
-	it('should ', function () {
-		
+	it('should send request and return promise on claimRewardBalance call', async function () {
+		const response = await instance.claimRewardBalance('', '', '', '')
+		expect(crossFetch.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/broadcast`,{
+			method: 'POST',
+			headers: {
+				Accept: 'application/json, text/plain, */*',
+				'Content-Type': 'application/json',
+				Authorization: 'test-access-token',
+			},
+			body: JSON.stringify({
+				operations: [['claim_reward_balance', {
+					account: '',
+					reward_hive: '',
+					reward_hbd: '',
+					reward_vests: ''
+				}]]
+			})
+		})
+		expect(response).toBeTruthy()
 	})
 })
