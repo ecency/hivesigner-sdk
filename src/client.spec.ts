@@ -324,4 +324,23 @@ describe('Client', function () {
 		})
 		expect(response).toBeTruthy()
 	})
+
+	it('should send request and return promise on delete call', async function () {
+		const response = await instance.deleteComment('', '')
+		expect(crossFetch.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/broadcast`,{
+			method: 'POST',
+			headers: {
+				Accept: 'application/json, text/plain, */*',
+				'Content-Type': 'application/json',
+				Authorization: 'test-access-token',
+			},
+			body: JSON.stringify({
+				operations: [['delete_comment', {
+					author: '',
+					permlink: ''
+				}]]
+			})
+		})
+		expect(response).toBeTruthy()
+	})
 })
