@@ -20,7 +20,7 @@ describe('Send operation method', function () {
 		params = {}
 		cb = () => {}
 
-		(window as any).open = jest.fn()
+		(window as { open: () => void }).open = jest.fn()
 		encodeOpMock = hive.encodeOp as jest.Mock
 		encodeOpMock.mockReturnValue('hive://')
 

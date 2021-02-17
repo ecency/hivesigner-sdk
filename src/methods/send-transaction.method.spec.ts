@@ -12,7 +12,6 @@ describe('Send transaction method', function () {
 	let tx: Transaction
 	let params: hive.Parameters
 	let cb: CallbackFunction
-	let windowOpenSpy: jasmine.Spy
 	let encodeTxMock: jest.Mock
 	let isBrowserMock: jest.Mock
 
@@ -20,7 +19,7 @@ describe('Send transaction method', function () {
 		tx = {} as Transaction
 		params = {}
 		cb = () => {}
-		(window as any).open = jest.fn()
+		(window as { open: () => void }).open = jest.fn()
 
 		encodeTxMock = hive.encodeTx as jest.Mock
 		encodeTxMock.mockReturnValue('hive://')

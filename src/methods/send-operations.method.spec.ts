@@ -12,7 +12,6 @@ describe('Send operations method', function () {
 	let ops: Operation
 	let params: hive.Parameters
 	let cb: CallbackFunction
-	let windowOpenSpy: jasmine.Spy
 	let encodeOpsMock: jest.Mock
 	let isBrowserMock: jest.Mock
 
@@ -20,7 +19,7 @@ describe('Send operations method', function () {
 		ops = {} as Operation
 		params = {}
 		cb = () => {}
-		(window as any).open = jest.fn()
+		(window as { open: () => void }).open = jest.fn()
 
 		encodeOpsMock = hive.encodeOps as jest.Mock
 		encodeOpsMock.mockReturnValue('hive://')
