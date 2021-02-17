@@ -250,4 +250,30 @@ describe('Client', function () {
 		expect(response).toBeTruthy()
 	})
 
+	it('should send request and return promise on unfollow call', async function () {
+		const response = await instance.unfollow('', '')
+		expect(crossFetch.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/broadcast`,{
+			method: 'POST',
+			headers: {
+				Accept: 'application/json, text/plain, */*',
+				'Content-Type': 'application/json',
+				Authorization: 'test-access-token',
+			},
+			body: JSON.stringify({
+				operations: [['custom_json', {
+					required_auths: [],
+					required_posting_auths: [''],
+					id: 'follow',
+					json: JSON.stringify(['follow', {
+						follower: '',
+						following: '',
+						what: []
+					}])
+				}]]
+			})
+		})
+		expect(response).toBeTruthy()
+	})
+
+
 })
