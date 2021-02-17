@@ -12,7 +12,6 @@ describe('Send operation method', function () {
 	let op: Operation
 	let params: hive.Parameters
 	let cb: CallbackFunction
-	let windowOpenSpy: jasmine.Spy
 	let encodeOpMock: jest.Mock
 	let isBrowserMock: jest.Mock
 
@@ -20,8 +19,8 @@ describe('Send operation method', function () {
 		op = {} as Operation
 		params = {}
 		cb = () => {}
-		windowOpenSpy = spyOn(window, 'open')
 
+		(window as any).open = jest.fn()
 		encodeOpMock = hive.encodeOp as jest.Mock
 		encodeOpMock.mockReturnValue('hive://')
 
@@ -30,7 +29,7 @@ describe('Send operation method', function () {
 	})
 
 	it('should call call window open if its browser and has callback', function () {
-		windowOpenSpy.and.returnValue({ focus: () => {} })
+		(window.open as jest.Mock).mockReturnValue({ focus: () => {} })
 		isBrowserMock.mockReturnValue(true)
 
 		sendOperation(op, params, cb)
