@@ -154,4 +154,18 @@ describe('Client', function () {
 		})
 		expect(response).toBeTruthy()
 	})
+
+	it('should return promise on updateUserMetadata call', async function () {
+		const response = await instance.updateUserMetadata({ username: '' })
+		expect(crossFetch.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/me`,{
+			method: 'PUT',
+			headers: {
+				Accept: 'application/json, text/plain, */*',
+				'Content-Type': 'application/json',
+				Authorization: 'test-access-token',
+			},
+			body: JSON.stringify({ user_metadata: { username: '' }})
+		})
+		expect(response).toBeTruthy()
+	})
 })
