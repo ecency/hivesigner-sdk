@@ -5,12 +5,12 @@ import { isBrowser } from './utilities'
 import { Operation } from '@hiveio/dhive'
 
 export class Client {
-	private apiURL: string
-	private app: string
-	private callbackURL: string
-	private scope: string[]
-	private responseType: string
-	private accessToken?: string
+	public apiURL: string
+	public app: string
+	public callbackURL: string
+	public scope: string[]
+	public responseType: string
+	public accessToken?: string
 
 	constructor(config: ClientConfig) {
 		this.apiURL = config.apiURL

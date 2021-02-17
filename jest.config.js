@@ -3,7 +3,8 @@ module.exports = {
   testEnvironment: 'node',
   globals: {
     window: {
-      open: () => {}
+      open: () => {},
+      location: ''
     }
   }
 };
