@@ -2,7 +2,7 @@ import fetch from 'cross-fetch'
 import { CallbackFunction, ClientConfig, LoginOptions, SendResponse } from './types'
 import { BASE_URL } from './consts'
 import { isBrowser } from './utilities'
-import { Operation } from 'dsteem'
+import { Operation } from '@hiveio/dhive'
 
 export class Client {
 	private apiURL: string
