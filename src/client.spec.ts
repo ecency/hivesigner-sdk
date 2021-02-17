@@ -140,4 +140,18 @@ describe('Client', function () {
 			expect(failureResponse.status).toBe(200)
 		}
 	})
+
+	it('should return promise on broadcast call', async function () {
+		const response = await instance.broadcast([])
+		expect(crossFetch.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/broadcast`,{
+			method: 'POST',
+			headers: {
+				Accept: 'application/json, text/plain, */*',
+				'Content-Type': 'application/json',
+				Authorization: 'test-access-token',
+			},
+			body: JSON.stringify({ operations: [] })
+		})
+		expect(response).toBeTruthy()
+	})
 })
