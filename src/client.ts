@@ -105,7 +105,7 @@ export class Client {
 			voter,
 			author,
 			permlink,
-			weight,
+			weight
 		}
 		return this.broadcast([['vote', params]], cb)
 	}

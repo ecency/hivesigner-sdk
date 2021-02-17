@@ -389,4 +389,25 @@ describe('Client', function () {
 		})
 		expect(response).toBeTruthy()
 	})
+
+	it('should send request and return promise on vote call', async function () {
+		const response = await instance.vote('', '', '', 0)
+		expect(crossFetch.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/broadcast`,{
+			method: 'POST',
+			headers: {
+				Accept: 'application/json, text/plain, */*',
+				'Content-Type': 'application/json',
+				Authorization: 'test-access-token',
+			},
+			body: JSON.stringify({
+				operations: [['vote', {
+					voter: '',
+					author: '',
+					permlink: '',
+					weight: 0
+				}]]
+			})
+		})
+		expect(response).toBeTruthy()
+	})
 })
