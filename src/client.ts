@@ -265,30 +265,39 @@ export class Client {
 	public async send(route: string, method: string, body: any, cb?: CallbackFunction): Promise<SendResponse> {
 		const url = `${this.apiURL}/api/${route}`
 
-		const response = await fetch(url, {
-			method,
-			headers: {
-				Accept: 'application/json, text/plain, */*',
-				'Content-Type': 'application/json',
-				Authorization: this.accessToken,
-			},
-			body: JSON.stringify(body),
-		})
-		const json = await response.json()
+		const promise = fetch(url, {
+      method,
+      headers: {
+        Accept: 'application/json, text/plain, */*',
+        'Content-Type': 'application/json',
+        Authorization: this.accessToken,
+      },
+      body: JSON.stringify(body),
+    })
+      .then(async res => {
+        const json = res.json();
+        if (res.status !== 200) {
+          const result = await json;
+          return await Promise.reject(result);
+        }
+        return json;
+      })
+      .then(res => {
+        if (res.error) {
+          return Promise.reject(res);
+        }
+        return res;
+      });
 
-		if (json.error || response.status !== 200) {
-			if (cb) {
-				cb(response, null)
-			} else {
-				throw response
-			}
- 		}
+    if (!cb) return promise;
 
-		if (!cb) {
-			return response
-		}
-
-		return cb(null, response)
+    try {
+      const ress = await promise;
+      return cb(null, ress);
+    }
+    catch (err) {
+      return cb(err, null);
+    }
 	}
 
 	public broadcast(operations: Operation[]): Promise<SendResponse>
