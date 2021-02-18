@@ -1,6 +1,6 @@
 import fetch from 'cross-fetch'
 import { CallbackFunction, ClientConfig, LoginOptions, SendResponse } from './types'
-import { BASE_URL } from './consts'
+import { API_URL, BASE_URL } from './consts'
 import { isBrowser } from './utilities'
 import { Operation } from '@hiveio/dhive'
 
@@ -13,7 +13,7 @@ export class Client {
 	public accessToken?: string
 
 	constructor(config: ClientConfig) {
-		this.apiURL = config.apiURL
+		this.apiURL = config.apiURL || API_URL
 		this.app = config.app
 		this.callbackURL = config.callbackURL
 		this.accessToken = config.accessToken
