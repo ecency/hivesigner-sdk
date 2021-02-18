@@ -5,12 +5,16 @@ var tsify = require('tsify');
 var sourcemaps = require('gulp-sourcemaps');
 var buffer = require('vinyl-buffer');
 var uglify = require('gulp-uglify');
+const pkg = require('./package.json');
+
+const libraryName = pkg.name;
 
 gulp.task("default", function () {
     return browserify({
         basedir: '.',
         entries: ['src/index.ts'],
         cache: {},
+        standalone: libraryName,
         packageCache: {}
     })
         .plugin(tsify)
