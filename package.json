@@ -35,7 +35,6 @@
   },
   "dependencies": {
     "cross-fetch": "^3.0.6",
-    "dsteem": "^0.11.3",
     "hive-uri": "^0.2.2"
   }
 }
