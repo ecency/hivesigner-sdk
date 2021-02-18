@@ -9,7 +9,8 @@
     "lib": ["es6"],
     "target": "es5",
     "allowJs": true,
-    "declaration": true
+    "declaration": true,
+    "rootDir": "src"
   },
-  "exclude": ["./**/*.spec.ts", "jest.config.js"]
+  "exclude": ["./**/*.spec.ts", "jest.config.js", "rollup.config.js"]
 }
