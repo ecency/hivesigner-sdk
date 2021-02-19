@@ -1,6 +1,6 @@
 {
   "name": "hivesigner",
-  "version": "1.0.0",
+  "version": "3.2.2",
   "description": "Hivesigner SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -15,8 +15,8 @@
     "type": "git",
     "url": "git+https://github.com/ecency/hivesigner-sdk.git"
   },
-  "author": "Ildar Timerbaev",
-  "license": "ISC",
+  "author": "Ecency <hello@ecency.com>",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/ecency/hivesigner-sdk/issues"
   },
