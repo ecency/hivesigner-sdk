@@ -1,0 +1,50 @@
+{
+  "name": "hivesigner",
+  "version": "3.2.2",
+  "description": "Hivesigner SDK",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "rimraf dist && npm run build:node && npm run build:web",
+    "build:node": "tsc",
+    "build:web": "gulp",
+    "test": "npx jest",
+    "lint": "eslint ./src/**/*.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ecency/hivesigner-sdk.git"
+  },
+  "author": "Ecency <hello@ecency.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ecency/hivesigner-sdk/issues"
+  },
+  "homepage": "https://github.com/ecency/hivesigner-sdk#readme",
+  "devDependencies": {
+    "@hiveio/dhive": "^0.14.12",
+    "@types/bytebuffer": "^5.0.42",
+    "@types/jest": "^26.0.20",
+    "@types/node": "^14.14.28",
+    "@typescript-eslint/eslint-plugin": "^4.15.1",
+    "@typescript-eslint/parser": "^4.15.1",
+    "browserify": "^17.0.0",
+    "eslint": "^7.20.0",
+    "gulp": "^4.0.2",
+    "gulp-sourcemaps": "^3.0.0",
+    "gulp-uglify": "^3.0.2",
+    "jest": "^26.6.3",
+    "ts-jest": "^26.5.1",
+    "ts-loader": "^8.0.17",
+    "ts-node": "^9.1.1",
+    "tsify": "^5.0.2",
+    "tslib": "^2.1.0",
+    "typescript": "^4.1.5",
+    "vinyl-buffer": "^1.0.1",
+    "vinyl-source-stream": "^2.0.0"
+  },
+  "dependencies": {
+    "cross-fetch": "^3.0.6",
+    "hive-uri": "^0.2.3"
+  }
+}
