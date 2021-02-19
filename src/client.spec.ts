@@ -11,6 +11,7 @@ describe('Client', function () {
 	let instance: Client
 	let isBrowserMock: jest.Mock
 	let crossFetchMock: jest.Mock
+	let crossFetchResponseMock: { status: string | number, json: () => {} }
 
 	beforeEach(() => {
 		instance = new Client({
@@ -25,11 +26,12 @@ describe('Client', function () {
 		isBrowserMock = utilities.isBrowser as jest.Mock
 		isBrowserMock.mockReturnValue(false)
 
-		crossFetchMock = crossFetch.fetch as jest.Mock
-		crossFetchMock.mockImplementation(async (...args: any[]) => ({
+		crossFetchResponseMock = {
 			status: 200,
 			json: async () => ({ error: '' })
-		}))
+		}
+		crossFetchMock = crossFetch.fetch as jest.Mock
+		crossFetchMock.mockImplementation(async (...args: any[]) => crossFetchResponseMock)
 	})
 
 	it('should create instance', function () {
@@ -105,40 +107,63 @@ describe('Client', function () {
 			},
 			body: JSON.stringify({})
 		})
-		expect(await response).toBeTruthy()
+		expect(response).toStrictEqual(await crossFetchResponseMock.json())
 	})
 
 	it('should return promise error on send call with if 200 status', async function () {
+		crossFetchResponseMock = {
+			status: 'not_200_OK',
+			json: async () => ({ error: '' })
+		}
 		try {
-			crossFetchMock.mockImplementation(async (...args: any[]) => ({
-				status: 'not_200_OK',
-				json: async () => ({ error: '' })
-			}))
 			const response = await instance.send('me', 'POST', {})
 			// Test should be broken
 			console.error('Client.send not threw error')
 			expect(true).toBe(false)
 		} catch (failureResponse) {
-			expect(failureResponse).toBeTruthy()
-			expect(failureResponse.status).toBe('not_200_OK')
+			expect(failureResponse).toStrictEqual(await crossFetchResponseMock.json())
 		}
 	})
 
 	it('should return promise error on send call if has json error', async function () {
+		crossFetchResponseMock = {
+			status: 200,
+			json: async () => ({ error: 'I have an error' })
+		}
 		try {
-			crossFetchMock.mockImplementation(async (...args: any[]) => ({
-				status: 200,
-				json: async () => ({ error: 'I have an error' })
-			}))
 			const response = await instance.send('me', 'POST', {})
 			// Test should be broken
 			console.error('Client.send not threw error')
 			expect(true).toBe(false)
 		} catch (failureResponse) {
 			expect(failureResponse).toBeTruthy()
-			expect((await failureResponse.json()).error).toBe('I have an error')
-			expect(failureResponse.status).toBe(200)
+			expect(failureResponse).toStrictEqual(await crossFetchResponseMock.json())
 		}
+	})
+
+	it('should return promise with results on send call with callback', async function () {
+		const callback = jest.fn().mockReturnValue('results')
+		const response = await instance.send('me', 'POST', {}, callback)
+
+		expect(callback).toHaveBeenCalled()
+		expect(callback).toHaveBeenCalledWith(null, await crossFetchResponseMock.json())
+		expect(callback).lastReturnedWith('results')
+		expect(response).toBe('results')
+	})
+
+	it('should return promise with failure results on send call with callback', async function () {
+		const callback = jest.fn().mockReturnValue('results')
+		crossFetchResponseMock = {
+			status: 'not_200_OK',
+			json: async () => ({ error: '' })
+		}
+		const response = await instance.send('me', 'POST', {}, callback)
+
+
+		expect(callback).toHaveBeenCalled()
+		expect(callback).toHaveBeenCalledWith(await crossFetchResponseMock.json(), null)
+		expect(callback).lastReturnedWith('results')
+		expect(response).toBe('results')
 	})
 
 	it('should return promise on broadcast call', async function () {
