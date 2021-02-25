@@ -12,12 +12,12 @@ const libraryName = pkg.name;
 gulp.task("default", function () {
     return browserify({
         basedir: '.',
-        entries: ['src/index.ts'],
+        entries: ['src/web.index.ts'],
         cache: {},
         standalone: libraryName,
         packageCache: {}
     })
-        .plugin(tsify)
+        .plugin(tsify, { target: 'es5', module: 'commonjs' })
         .bundle()
         .pipe(source('hivesigner.min.js'))
         .pipe(buffer())

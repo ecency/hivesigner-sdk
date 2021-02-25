@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -35,14 +34,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Client = void 0;
-var cross_fetch_1 = require("cross-fetch");
-var consts_1 = require("./consts");
-var utilities_1 = require("./utilities");
+import fetch from 'cross-fetch';
+import { API_URL, BASE_URL } from './consts';
+import { isBrowser } from './utilities';
 var Client = /** @class */ (function () {
     function Client(config) {
-        this.apiURL = config.apiURL || consts_1.API_URL;
+        this.apiURL = config.apiURL || API_URL;
         this.app = config.app;
         this.callbackURL = config.callbackURL;
         this.accessToken = config.accessToken;
@@ -79,7 +76,7 @@ var Client = /** @class */ (function () {
     };
     Client.prototype.getLoginURL = function (state) {
         var redirectUri = encodeURIComponent(this.callbackURL);
-        var loginURL = consts_1.BASE_URL + "/oauth2/authorize?client_id=" + this.app + "&redirect_uri=" + redirectUri;
+        var loginURL = BASE_URL + "/oauth2/authorize?client_id=" + this.app + "&redirect_uri=" + redirectUri;
         if (this.responseType === 'code') {
             loginURL += "&response_type=" + this.responseType;
         }
@@ -92,7 +89,7 @@ var Client = /** @class */ (function () {
         return loginURL;
     };
     Client.prototype.login = function (options) {
-        if (utilities_1.isBrowser()) {
+        if (isBrowser()) {
             // @ts-ignore
             window.location = this.getLoginURL(options.state);
         }
@@ -216,7 +213,7 @@ var Client = /** @class */ (function () {
             var response, json;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, cross_fetch_1.default(url, {
+                    case 0: return [4 /*yield*/, fetch(url, {
                             method: method,
                             headers: {
                                 Accept: 'application/json, text/plain, */*',
@@ -240,5 +237,5 @@ var Client = /** @class */ (function () {
     };
     return Client;
 }());
-exports.Client = Client;
+export { Client };
 //# sourceMappingURL=client.js.map
