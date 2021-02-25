@@ -1,16 +1,12 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __exportStar = (this && this.__exportStar) || function(m, exports) {
-    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+import { Client } from './client';
+import { Initialize } from './factories';
+import { sendTransaction, sendOperations, sendOperation, sign } from './methods';
+export default {
+    Client: Client,
+    Initialize: Initialize,
+    sendOperation: sendOperation,
+    sendOperations: sendOperations,
+    sendTransaction: sendTransaction,
+    sign: sign
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-__exportStar(require("./client"), exports);
-__exportStar(require("./factories"), exports);
-__exportStar(require("./methods"), exports);
 //# sourceMappingURL=index.js.map

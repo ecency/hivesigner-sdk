@@ -1,18 +1,6 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __exportStar = (this && this.__exportStar) || function(m, exports) {
-    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-__exportStar(require("./client-config.interface"), exports);
-__exportStar(require("./sign-errors.interface"), exports);
-__exportStar(require("./callback-function.type"), exports);
-__exportStar(require("./login-options.interface"), exports);
-__exportStar(require("./send-response.type"), exports);
+export * from './client-config.interface';
+export * from './sign-errors.interface';
+export * from './callback-function.type';
+export * from './login-options.interface';
+export * from './send-response.type';
 //# sourceMappingURL=index.js.map
