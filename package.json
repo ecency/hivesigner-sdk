@@ -2,12 +2,10 @@
   "name": "hivesigner",
   "version": "3.2.2",
   "description": "Hivesigner SDK",
-  "main": "dist/index.js",
+  "main": "dist/hivesigner.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "rimraf dist && npm run build:node && npm run build:web",
-    "build:node": "tsc",
-    "build:web": "gulp",
+    "build": "rimraf dist && gulp && tsc --emitDeclarationOnly",
     "test": "npx jest",
     "lint": "eslint ./src/**/*.ts"
   },
