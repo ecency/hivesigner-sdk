@@ -1,6 +1,6 @@
 {
   "name": "hivesigner",
-  "version": "3.2.3",
+  "version": "3.2.4",
   "description": "Hivesigner SDK",
   "main": "dist/hivesigner.js",
   "types": "dist/index.d.ts",
