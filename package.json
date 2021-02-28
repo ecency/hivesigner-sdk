@@ -27,6 +27,7 @@
     "@typescript-eslint/eslint-plugin": "^4.15.1",
     "@typescript-eslint/parser": "^4.15.1",
     "browserify": "^17.0.0",
+    "common-shakeify": "^0.6.2",
     "eslint": "^7.20.0",
     "gulp": "^4.0.2",
     "gulp-sourcemaps": "^3.0.0",

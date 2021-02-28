@@ -5,6 +5,7 @@ var tsify = require('tsify');
 var sourcemaps = require('gulp-sourcemaps');
 var buffer = require('vinyl-buffer');
 var uglify = require('gulp-uglify');
+var commonShakify = require('common-shakeify')
 const pkg = require('./package.json');
 
 const libraryName = pkg.name;
@@ -15,9 +16,10 @@ function buildNode() {
     entries: ['src/index.ts'],
     cache: {},
     standalone: libraryName,
-    packageCache: {}
+    packageCache: {},
   })
     .plugin(tsify, {target: 'es5', module: 'commonjs'})
+    .plugin(commonShakify)
     .bundle()
     .pipe(source('hivesigner.js'))
     .pipe(gulp.dest('dist'));
@@ -32,6 +34,7 @@ function buildWeb() {
     packageCache: {}
   })
     .plugin(tsify, {target: 'es5', module: 'commonjs'})
+    .plugin(commonShakify)
     .bundle()
     .pipe(source('hivesigner.min.js'))
     .pipe(buffer())
