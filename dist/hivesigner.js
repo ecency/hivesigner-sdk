@@ -4538,6 +4538,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./client"), exports);
 __exportStar(require("./methods"), exports);
 __exportStar(require("./factories"), exports);
+var client_1 = require("./client");
+var factories_1 = require("./factories");
+var methods_1 = require("./methods");
+exports.default = {
+    Client: client_1.Client,
+    Initialize: factories_1.Initialize,
+    sendTransaction: methods_1.sendTransaction,
+    sendOperations: methods_1.sendOperations,
+    sendOperation: methods_1.sendOperation,
+    sign: methods_1.sign,
+};
 
 },{"./client":12,"./factories":17,"./methods":20}],20:[function(require,module,exports){
 "use strict";
