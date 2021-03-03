@@ -3,15 +3,18 @@ const pkg = require('./package.json');
 const libraryName = pkg.name;
 
 module.exports = {
-  entry: path.resolve(__dirname, './src/index.ts'),
+  entry: [
+    path.resolve(__dirname, './src/index.ts')
+  ],
   output: {
     path: path.resolve(__dirname, './dist'),
     filename: `${libraryName}.min.js`,
+    library: libraryName,
   },
   module: {
     rules: [
       {
-        test: /\.ts?$/,
+        test: /\.ts$/,
         loader: 'babel-loader',
       },
     ]
