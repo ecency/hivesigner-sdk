@@ -1,4 +1,4 @@
-import hivesigner from '../dist/index'
+import hivesigner from '../lib/index'
 
 describe('Testing default import', function () {
   it('should contain Client class', function () {

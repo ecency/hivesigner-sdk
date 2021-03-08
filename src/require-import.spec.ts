@@ -1,4 +1,4 @@
-const hivesigner = require('../dist/index')
+const hivesigner = require('../lib/index')
 
 describe('Testing default import', function () {
   it('should contain Client class', function () {

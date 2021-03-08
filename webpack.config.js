@@ -7,7 +7,7 @@ module.exports = {
     path.resolve(__dirname, './src/index.ts')
   ],
   output: {
-    path: path.resolve(__dirname, './dist'),
+    path: path.resolve(__dirname, './lib'),
     filename: `${libraryName}.min.js`,
     library: libraryName,
   },

@@ -1,5 +1,5 @@
 // @ts-ignore
-import { Client } from '../dist/index'
+import { Client } from '../lib/index'
 
 describe('Testing module imports', function () {
   it('should contain Client class', function () {

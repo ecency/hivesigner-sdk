@@ -3,10 +3,10 @@
   "version": "3.2.4",
   "description": "Hivesigner SDK",
   "browser": "dist/hivesigner.min.js",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
-    "build": "rimraf dist && webpack && tsc",
+    "build": "rimraf lib && webpack && rollup -c rollup.config.js && tsc --emitDeclarationOnly",
     "test": "npx jest",
     "lint": "eslint ./src/**/*.ts"
   },
@@ -38,6 +38,8 @@
     "babel-loader": "^8.2.2",
     "eslint": "^7.20.0",
     "jest": "^26.6.3",
+    "rollup": "^2.40.0",
+    "rollup-plugin-typescript": "^1.0.1",
     "ts-jest": "^26.5.1",
     "ts-loader": "^8.0.17",
     "ts-node": "^9.1.1",
