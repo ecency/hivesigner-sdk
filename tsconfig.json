@@ -1,15 +1,15 @@
 {
   "compilerOptions": {
-    "outDir": "./dist/",
+    "outDir": "./lib/",
     "moduleResolution": "node",
     "noImplicitAny": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
-    "module": "es2015",
+    "module": "commonjs",
     "target": "es5",
     "allowJs": false,
     "declaration": true,
     "rootDir": "src"
   },
-  "exclude": ["./**/*.spec.ts", "jest.config.js", "gulpfile.js"]
+  "exclude": ["./**/*.spec.ts", "jest.config.js", "rollup.config.js"]
 }
