@@ -1,8 +1,8 @@
 {
   "name": "hivesigner",
-  "version": "3.2.5",
+  "version": "3.2.6",
   "description": "Hivesigner SDK",
-  "browser": "dist/hivesigner.min.js",
+  "browser": "lib/hivesigner.min.js",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
