@@ -2,9 +2,8 @@
   "name": "hivesigner",
   "version": "3.2.6",
   "description": "Hivesigner SDK",
-  "browser": "lib/hivesigner.min.js",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "./lib/index",
+  "types": "./lib/index",
   "scripts": {
     "build": "rimraf lib && webpack && rollup -c rollup.config.js && tsc --emitDeclarationOnly",
     "test": "npx jest",
