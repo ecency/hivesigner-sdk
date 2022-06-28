@@ -1,6 +1,6 @@
 {
   "name": "hivesigner",
-  "version": "3.2.7",
+  "version": "3.2.8",
   "description": "Hivesigner SDK",
   "main": "./lib/index",
   "types": "./lib/index",
@@ -27,7 +27,7 @@
     "@babel/plugin-transform-runtime": "^7.13.9",
     "@babel/preset-env": "^7.13.9",
     "@babel/preset-typescript": "^7.13.0",
-    "@hiveio/dhive": "^0.14.12",
+    "@hiveio/dhive": "^1.2.2",
     "@types/bytebuffer": "^5.0.42",
     "@types/jest": "^26.0.20",
     "@types/node": "^14.14.28",
@@ -50,6 +50,6 @@
   "dependencies": {
     "@babel/runtime": "^7.13.9",
     "cross-fetch": "^3.0.6",
-    "hive-uri": "^0.2.3"
+    "hive-uri": "^0.2.4"
   }
 }

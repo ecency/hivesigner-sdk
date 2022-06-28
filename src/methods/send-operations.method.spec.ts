@@ -9,14 +9,14 @@ jest.mock('../utilities')
 jest.mock('hive-uri')
 
 describe('Send operations method', function () {
-	let ops: Operation
+	let ops: Operation[]
 	let params: hive.Parameters
 	let cb: CallbackFunction
 	let encodeOpsMock: jest.Mock
 	let isBrowserMock: jest.Mock
 
 	beforeEach(() => {
-		ops = {} as Operation
+		ops = [] as Operation[]
 		params = {}
 		cb = () => {}
 		(window as { open: () => void }).open = jest.fn()
