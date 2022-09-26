@@ -15,7 +15,7 @@ export declare class Client {
     setAccessToken(accessToken: string): this;
     removeAccessToken(): this;
     setScope(scope: string[]): this;
-    getLoginURL(state: string): string;
+    getLoginURL(state: string, select_account?: string): string;
     login(options: LoginOptions): void;
     me(): Promise<SendResponse>;
     me(cb: CallbackFunction): Promise<SendResponse>;

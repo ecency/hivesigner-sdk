@@ -58,7 +58,7 @@ export class Client {
 		return this
 	}
 
-	public getLoginURL(state: string): string {
+	public getLoginURL(state: string, select_account?: string): string {
 		const redirectUri = encodeURIComponent(this.callbackURL)
 		let loginURL = `${BASE_URL}/oauth2/authorize?client_id=${this.app}&redirect_uri=${redirectUri}`
 		if (this.responseType === 'code') {
@@ -69,6 +69,9 @@ export class Client {
 		}
 		if (state) {
 			loginURL += `&state=${encodeURIComponent(state)}`
+		}
+		if (select_account) {
+			loginURL += `&select_account=${select_account}`
 		}
 		return loginURL
 	}
