@@ -89,10 +89,10 @@ export class Client {
 		return this.send('me', 'POST', {}, cb)
 	}
 
-	public decode(): Promise<SendResponse>
-	public decode(cb: CallbackFunction): Promise<SendResponse>
-	public decode(cb?: CallbackFunction): Promise<SendResponse> {
-		return this.send('decode', 'POST', {}, cb)
+	public decode(memo: string): Promise<SendResponse>
+	public decode(memo: string, cb: CallbackFunction): Promise<SendResponse>
+	public decode(memo: string, cb?: CallbackFunction): Promise<SendResponse> {
+		return this.send('decode', 'POST', {memo: memo}, cb)
 	}
 
 	public vote(voter: string, author: string, permlink: string, weight: string | number): Promise<SendResponse>

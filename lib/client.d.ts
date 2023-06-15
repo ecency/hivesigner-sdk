@@ -19,8 +19,8 @@ export declare class Client {
     login(options: LoginOptions): void;
     me(): Promise<SendResponse>;
     me(cb: CallbackFunction): Promise<SendResponse>;
-    decode(): Promise<SendResponse>;
-    decode(cb: CallbackFunction): Promise<SendResponse>;
+    decode(memo: string): Promise<SendResponse>;
+    decode(memo: string, cb: CallbackFunction): Promise<SendResponse>;
     vote(voter: string, author: string, permlink: string, weight: string | number): Promise<SendResponse>;
     vote(voter: string, author: string, permlink: string, weight: string | number, cb: CallbackFunction): Promise<SendResponse>;
     comment(parentAuthor: string, parentPermlink: string, author: string, permlink: string, title: string, body: any, jsonMetadata: any): Promise<SendResponse>;
