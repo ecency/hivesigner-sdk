@@ -83,6 +83,9 @@ describe('Client', function () {
 
 		expect(instance.getLoginURL('state'))
 			.toBe(`${BASE_URL}/oauth2/authorize?client_id=test-app&redirect_uri=${encodeURIComponent(instance.callbackURL)}&response_type=code&scope=test-scope,test-scope-1&state=state`)
+
+		expect(instance.getLoginURL('state', 'demo'))
+			.toBe(`${BASE_URL}/oauth2/authorize?client_id=test-app&redirect_uri=${encodeURIComponent(instance.callbackURL)}&response_type=code&scope=test-scope,test-scope-1&state=state&select_account=demo`)
 	})
 
 	it('should change window location on login if its browser', function () {
