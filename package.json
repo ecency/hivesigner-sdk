@@ -1,6 +1,6 @@
 {
   "name": "hivesigner",
-  "version": "3.2.9",
+  "version": "3.3.0",
   "description": "Hivesigner SDK",
   "main": "./lib/index",
   "types": "./lib/index",
