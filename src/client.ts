@@ -58,7 +58,7 @@ export class Client {
 		return this
 	}
 
-	public getLoginURL(state: string): string {
+	public getLoginURL(state: string, account?: string): string {
 		const redirectUri = encodeURIComponent(this.callbackURL)
 		let loginURL = `${BASE_URL}/oauth2/authorize?client_id=${this.app}&redirect_uri=${redirectUri}`
 		if (this.responseType === 'code') {
@@ -69,6 +69,9 @@ export class Client {
 		}
 		if (state) {
 			loginURL += `&state=${encodeURIComponent(state)}`
+		}
+		if (account) {
+			loginURL += `&account=${encodeURIComponent(account)}`
 		}
 		return loginURL
 	}
@@ -84,6 +87,12 @@ export class Client {
 	public me(cb: CallbackFunction): Promise<SendResponse>
 	public me(cb?: CallbackFunction): Promise<SendResponse> {
 		return this.send('me', 'POST', {}, cb)
+	}
+
+	public decode(): Promise<SendResponse>
+	public decode(cb: CallbackFunction): Promise<SendResponse>
+	public decode(cb?: CallbackFunction): Promise<SendResponse> {
+		return this.send('decode', 'POST', {}, cb)
 	}
 
 	public vote(voter: string, author: string, permlink: string, weight: string | number): Promise<SendResponse>

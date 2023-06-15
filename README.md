@@ -98,6 +98,21 @@ If it is successful, the result will be a JSON object with the following propert
 }
 ```
 
+### Decode memo
+Decode encrypted memo, only works if encryption is done with hivesigner account's posting public key
+```
+client.decode(function (err, res) {
+  console.log(err, res)
+});
+```
+If it is successful, the result will be a JSON object with the following properties:
+```
+{
+  memoDecoded: "#ev.....",
+  username: "demo"
+}
+```
+
 ### Logout
 The revokeToken() method will log the current user out of your application by revoking the access token provided to your app for that user: 
 ```
