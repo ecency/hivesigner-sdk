@@ -4,7 +4,7 @@
 
 # HiveSigner SDK
 
-The official HiveSigner JavaScript SDK, written in Typescript. Library supports both callback and promise functions.
+The official HiveSigner JavaScript SDK, written in Typescript. Library supports both callback and promise functions. Learn more about integration: https://docs.hivesigner.com.
 
 ## Getting started
 
