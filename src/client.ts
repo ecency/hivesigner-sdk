@@ -1,8 +1,11 @@
-import fetch from 'cross-fetch'
+import crossFetch from 'cross-fetch'
 import { CallbackFunction, ClientConfig, LoginOptions, SendResponse } from './types'
 import { API_URL, BASE_URL } from './consts'
 import { isBrowser } from './utilities'
 import { Operation } from '@hiveio/dhive'
+
+// Bind fetch to avoid "Illegal invocation" errors in browsers
+const fetch = crossFetch.bind(typeof globalThis !== 'undefined' ? globalThis : undefined)
 
 export class Client {
 	public apiURL: string
