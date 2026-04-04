@@ -6,6 +6,19 @@
 
 The official HiveSigner JavaScript SDK, written in Typescript. Library supports both callback and promise functions. Learn more about integration: https://docs.hivesigner.com.
 
+## Upgrading to v4
+
+v4 includes breaking changes that reduce the bundle size by 71%. Please review before upgrading:
+
+### Requirements
+- **Node.js 18+** is now required. The `cross-fetch` polyfill has been removed in favor of the native `fetch` API. If you are on Node.js < 18, stay on v3.x.
+- **ES2017+ environments** — the build output now targets ES2017. IE11 and other pre-ES2017 browsers are no longer supported.
+
+### Removed dependencies
+- `cross-fetch` — replaced by native `fetch`. If your environment does not provide a global `fetch`, you must polyfill it before using the SDK.
+- `@babel/runtime` — no longer needed.
+- `@hiveio/dhive` is no longer a peer/dev dependency. The `Operation` and `Transaction` types are now included directly in the SDK. If you were importing these types from `@hiveio/dhive` and passing them to SDK methods like `broadcast()`, they remain compatible — no code changes needed.
+
 ## Getting started
 
 To install and run HiveSigner SDK, follow this quick start guide

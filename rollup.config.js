@@ -1,12 +1,13 @@
-import typescript from 'rollup-plugin-typescript';
+import typescript from '@rollup/plugin-typescript';
 
 export default {
   input: './src/index.ts',
   output: {
-    dir: 'lib',
+    file: 'lib/index.js',
     format: 'cjs',
+    exports: 'named',
   },
   plugins: [
-    typescript()
+    typescript({ declaration: false, sourceMap: false, module: 'esnext' })
   ]
 }

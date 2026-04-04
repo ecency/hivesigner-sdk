@@ -1,8 +1,7 @@
 import { BETA_URL } from '../consts'
 import { encodeOp, Parameters } from 'hive-uri'
 import { isBrowser } from '../utilities'
-import { CallbackFunction } from '../types'
-import { Operation } from '@hiveio/dhive'
+import { CallbackFunction, Operation } from '../types'
 
 export function sendOperation(op: Operation, params: Parameters, cb: CallbackFunction): string | void {
 	const uri = encodeOp(op, params)

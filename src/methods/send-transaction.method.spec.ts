@@ -1,5 +1,5 @@
 import { sendTransaction } from './send-transaction.method'
-import { Transaction } from '@hiveio/dhive'
+import { Transaction } from '../types'
 import * as hive from 'hive-uri'
 import * as utilities from '../utilities'
 import { CallbackFunction } from '../types'

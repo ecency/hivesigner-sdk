@@ -2,16 +2,14 @@ import { Client } from './client'
 import { ClientConfig } from './types'
 import { API_URL, BASE_URL } from './consts'
 import * as utilities from './utilities'
-import * as crossFetch from 'cross-fetch'
 
 jest.mock('./utilities')
-jest.mock('cross-fetch')
 
 describe('Client', function () {
 	let instance: Client
 	let isBrowserMock: jest.Mock
-	let crossFetchMock: jest.Mock
-	let crossFetchResponseMock: { status: string | number, json: () => {} }
+	let fetchMock: jest.Mock
+	let fetchResponseMock: { status: string | number, json: () => {} }
 
 	beforeEach(() => {
 		instance = new Client({
@@ -26,12 +24,12 @@ describe('Client', function () {
 		isBrowserMock = utilities.isBrowser as jest.Mock
 		isBrowserMock.mockReturnValue(false)
 
-		crossFetchResponseMock = {
+		fetchResponseMock = {
 			status: 200,
 			json: async () => ({ error: '' })
 		}
-		crossFetchMock = crossFetch.fetch as jest.Mock
-		crossFetchMock.mockImplementation(async (...args: any[]) => crossFetchResponseMock)
+		fetchMock = jest.fn().mockImplementation(async (...args: any[]) => fetchResponseMock)
+		global.fetch = fetchMock
 	})
 
 	it('should create instance', function () {
@@ -101,7 +99,7 @@ describe('Client', function () {
 
 	it('should return promise resolve on send call', async function () {
 		const response = await instance.send('me', 'POST', {})
-		expect(crossFetch.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/me`,{
+		expect(global.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/me`,{
 			method: 'POST',
 			headers: {
 				Accept: 'application/json, text/plain, */*',
@@ -110,11 +108,11 @@ describe('Client', function () {
 			},
 			body: JSON.stringify({})
 		})
-		expect(response).toStrictEqual(await crossFetchResponseMock.json())
+		expect(response).toStrictEqual(await fetchResponseMock.json())
 	})
 
 	it('should return promise error on send call with if 200 status', async function () {
-		crossFetchResponseMock = {
+		fetchResponseMock = {
 			status: 'not_200_OK',
 			json: async () => ({ error: '' })
 		}
@@ -124,12 +122,12 @@ describe('Client', function () {
 			console.error('Client.send not threw error')
 			expect(true).toBe(false)
 		} catch (failureResponse) {
-			expect(failureResponse).toStrictEqual(await crossFetchResponseMock.json())
+			expect(failureResponse).toStrictEqual(await fetchResponseMock.json())
 		}
 	})
 
 	it('should return promise error on send call if has json error', async function () {
-		crossFetchResponseMock = {
+		fetchResponseMock = {
 			status: 200,
 			json: async () => ({ error: 'I have an error' })
 		}
@@ -140,7 +138,7 @@ describe('Client', function () {
 			expect(true).toBe(false)
 		} catch (failureResponse) {
 			expect(failureResponse).toBeTruthy()
-			expect(failureResponse).toStrictEqual(await crossFetchResponseMock.json())
+			expect(failureResponse).toStrictEqual(await fetchResponseMock.json())
 		}
 	})
 
@@ -149,14 +147,14 @@ describe('Client', function () {
 		const response = await instance.send('me', 'POST', {}, callback)
 
 		expect(callback).toHaveBeenCalled()
-		expect(callback).toHaveBeenCalledWith(null, await crossFetchResponseMock.json())
+		expect(callback).toHaveBeenCalledWith(null, await fetchResponseMock.json())
 		expect(callback).lastReturnedWith('results')
 		expect(response).toBe('results')
 	})
 
 	it('should return promise with failure results on send call with callback', async function () {
 		const callback = jest.fn().mockReturnValue('results')
-		crossFetchResponseMock = {
+		fetchResponseMock = {
 			status: 'not_200_OK',
 			json: async () => ({ error: '' })
 		}
@@ -164,14 +162,14 @@ describe('Client', function () {
 
 
 		expect(callback).toHaveBeenCalled()
-		expect(callback).toHaveBeenCalledWith(await crossFetchResponseMock.json(), null)
+		expect(callback).toHaveBeenCalledWith(await fetchResponseMock.json(), null)
 		expect(callback).lastReturnedWith('results')
 		expect(response).toBe('results')
 	})
 
 	it('should return promise on broadcast call', async function () {
 		const response = await instance.broadcast([])
-		expect(crossFetch.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/broadcast`,{
+		expect(global.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/broadcast`,{
 			method: 'POST',
 			headers: {
 				Accept: 'application/json, text/plain, */*',
@@ -185,7 +183,7 @@ describe('Client', function () {
 
 	it('should return promise on updateUserMetadata call', async function () {
 		const response = await instance.updateUserMetadata({ username: '' })
-		expect(crossFetch.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/me`,{
+		expect(global.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/me`,{
 			method: 'PUT',
 			headers: {
 				Accept: 'application/json, text/plain, */*',
@@ -199,7 +197,7 @@ describe('Client', function () {
 
 	it('should send request and return client instance on revokeToken call', async function () {
 		const response = await instance.revokeToken()
-		expect(crossFetch.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/oauth2/token/revoke`,{
+		expect(global.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/oauth2/token/revoke`,{
 			method: 'POST',
 			headers: {
 				Accept: 'application/json, text/plain, */*',
@@ -213,7 +211,7 @@ describe('Client', function () {
 
 	it('should send request and return promise on claimRewardBalance call', async function () {
 		const response = await instance.claimRewardBalance('', '', '', '')
-		expect(crossFetch.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/broadcast`,{
+		expect(global.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/broadcast`,{
 			method: 'POST',
 			headers: {
 				Accept: 'application/json, text/plain, */*',
@@ -234,7 +232,7 @@ describe('Client', function () {
 
 	it('should send request and return promise on custom json call', async function () {
 		const response = await instance.customJson('', '', '', {})
-		expect(crossFetch.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/broadcast`,{
+		expect(global.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/broadcast`,{
 			method: 'POST',
 			headers: {
 				Accept: 'application/json, text/plain, */*',
@@ -255,7 +253,7 @@ describe('Client', function () {
 
 	it('should send request and return promise on ignore call', async function () {
 		const response = await instance.ignore('', '')
-		expect(crossFetch.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/broadcast`,{
+		expect(global.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/broadcast`,{
 			method: 'POST',
 			headers: {
 				Accept: 'application/json, text/plain, */*',
@@ -280,7 +278,7 @@ describe('Client', function () {
 
 	it('should send request and return promise on unfollow call', async function () {
 		const response = await instance.unfollow('', '')
-		expect(crossFetch.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/broadcast`,{
+		expect(global.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/broadcast`,{
 			method: 'POST',
 			headers: {
 				Accept: 'application/json, text/plain, */*',
@@ -305,7 +303,7 @@ describe('Client', function () {
 
 	it('should send request and return promise on follow call', async function () {
 		const response = await instance.follow('', '')
-		expect(crossFetch.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/broadcast`,{
+		expect(global.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/broadcast`,{
 			method: 'POST',
 			headers: {
 				Accept: 'application/json, text/plain, */*',
@@ -330,7 +328,7 @@ describe('Client', function () {
 
 	it('should send request and return promise on reblog call', async function () {
 		const response = await instance.reblog('', '', '')
-		expect(crossFetch.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/broadcast`,{
+		expect(global.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/broadcast`,{
 			method: 'POST',
 			headers: {
 				Accept: 'application/json, text/plain, */*',
@@ -355,7 +353,7 @@ describe('Client', function () {
 
 	it('should send request and return promise on deleteComment call', async function () {
 		const response = await instance.deleteComment('', '')
-		expect(crossFetch.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/broadcast`,{
+		expect(global.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/broadcast`,{
 			method: 'POST',
 			headers: {
 				Accept: 'application/json, text/plain, */*',
@@ -374,7 +372,7 @@ describe('Client', function () {
 
 	it('should send request and return promise on comment call', async function () {
 		let response = await instance.comment('', '', '', '', '', {}, {})
-		expect(crossFetch.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/broadcast`,{
+		expect(global.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/broadcast`,{
 			method: 'POST',
 			headers: {
 				Accept: 'application/json, text/plain, */*',
@@ -396,7 +394,7 @@ describe('Client', function () {
 		expect(response).toBeTruthy()
 
 		response = await instance.comment('', '', '', '', '', {}, 'meta')
-		expect(crossFetch.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/broadcast`,{
+		expect(global.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/broadcast`,{
 			method: 'POST',
 			headers: {
 				Accept: 'application/json, text/plain, */*',
@@ -420,7 +418,7 @@ describe('Client', function () {
 
 	it('should send request and return promise on vote call', async function () {
 		const response = await instance.vote('', '', '', 0)
-		expect(crossFetch.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/broadcast`,{
+		expect(global.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/broadcast`,{
 			method: 'POST',
 			headers: {
 				Accept: 'application/json, text/plain, */*',
@@ -441,7 +439,7 @@ describe('Client', function () {
 
 	it('should send request and return promise on me call', async function () {
 		const response = await instance.me()
-		expect(crossFetch.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/me`,{
+		expect(global.fetch).toHaveBeenCalledWith(`${instance.apiURL}/api/me`,{
 			method: 'POST',
 			headers: {
 				Accept: 'application/json, text/plain, */*',

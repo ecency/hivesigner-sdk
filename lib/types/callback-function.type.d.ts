@@ -1,1 +1,1 @@
-export declare type CallbackFunction = (error: any, response: any) => any;
+export type CallbackFunction = (error: any, response: any) => any;

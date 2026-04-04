@@ -1,8 +1,7 @@
 import { encodeTx, Parameters } from 'hive-uri'
 import { BETA_URL } from '../consts'
 import { isBrowser } from '../utilities'
-import { CallbackFunction } from '../types'
-import { Transaction } from '@hiveio/dhive'
+import { CallbackFunction, Transaction } from '../types'
 
 export function sendTransaction(tx: Transaction, params: Parameters, cb: CallbackFunction): string | void {
 	const uri = encodeTx(tx, params)

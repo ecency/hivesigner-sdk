@@ -1,1 +1,1 @@
-export declare type SendResponse = any;
+export type SendResponse = any;

@@ -1,11 +1,6 @@
-import crossFetch from 'cross-fetch'
-import { CallbackFunction, ClientConfig, LoginOptions, SendResponse } from './types'
+import { CallbackFunction, ClientConfig, LoginOptions, Operation, SendResponse } from './types'
 import { API_URL, BASE_URL } from './consts'
 import { isBrowser } from './utilities'
-import { Operation } from '@hiveio/dhive'
-
-// Bind fetch to avoid "Illegal invocation" errors in browsers
-const fetch = crossFetch.bind(typeof globalThis !== 'undefined' ? globalThis : undefined)
 
 export class Client {
 	public apiURL: string
@@ -296,7 +291,13 @@ export class Client {
 	}
 
 	private async makeRequest(url: string, method: string, body: any): Promise<SendResponse> {
-		const response = await fetch(url, {
+		if (typeof globalThis.fetch !== 'function') {
+			throw new Error(
+				'hivesigner: fetch is not available. Node.js 18+ or a modern browser is required. ' +
+				'If you are in an older environment, provide a global fetch polyfill.'
+			)
+		}
+		const response = await globalThis.fetch(url, {
 			method,
 			headers: {
 				Accept: 'application/json, text/plain, */*',

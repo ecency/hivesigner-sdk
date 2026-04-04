@@ -1,5 +1,4 @@
-import { CallbackFunction, ClientConfig, LoginOptions, SendResponse } from './types';
-import { Operation } from '@hiveio/dhive';
+import { CallbackFunction, ClientConfig, LoginOptions, Operation, SendResponse } from './types';
 export declare class Client {
     apiURL: string;
     app: string;

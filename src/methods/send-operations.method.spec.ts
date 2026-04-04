@@ -1,4 +1,4 @@
-import { Operation } from '@hiveio/dhive'
+import { Operation } from '../types'
 import * as hive from 'hive-uri'
 import * as utilities from '../utilities'
 import { CallbackFunction } from '../types'

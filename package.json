@@ -1,11 +1,11 @@
 {
   "name": "hivesigner",
-  "version": "3.3.5",
+  "version": "4.0.0",
   "description": "Hivesigner SDK",
   "main": "./lib/index",
   "types": "./lib/index",
   "scripts": {
-    "build": "rimraf lib && NODE_OPTIONS=--openssl-legacy-provider webpack && rollup -c rollup.config.js && tsc --emitDeclarationOnly",
+    "build": "rimraf lib && webpack && rollup -c rollup.config.js && tsc --emitDeclarationOnly",
     "test": "npx jest",
     "lint": "eslint ./src/**/*.ts"
   },
@@ -15,41 +15,31 @@
   },
   "author": "Ecency <hello@ecency.com>",
   "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "bugs": {
     "url": "https://github.com/ecency/hivesigner-sdk/issues"
   },
   "homepage": "https://github.com/ecency/hivesigner-sdk#readme",
   "devDependencies": {
-    "@babel/core": "^7.13.8",
-    "@babel/plugin-proposal-class-properties": "^7.13.0",
-    "@babel/plugin-proposal-object-rest-spread": "^7.13.8",
-    "@babel/plugin-transform-modules-commonjs": "^7.13.8",
-    "@babel/plugin-transform-runtime": "^7.13.9",
-    "@babel/preset-env": "^7.13.9",
-    "@babel/preset-typescript": "^7.13.0",
-    "@hiveio/dhive": "^1.2.6",
-    "@types/bytebuffer": "^5.0.42",
+    "@rollup/plugin-typescript": "^12.3.0",
     "@types/jest": "^26.0.20",
     "@types/node": "^14.14.28",
     "@typescript-eslint/eslint-plugin": "^4.15.1",
     "@typescript-eslint/parser": "^4.15.1",
-    "babel-core": "^6.26.3",
-    "babel-loader": "^8.2.2",
     "eslint": "^7.20.0",
     "jest": "^26.6.3",
     "rollup": "^2.40.0",
-    "rollup-plugin-typescript": "^1.0.1",
     "ts-jest": "^26.5.1",
     "ts-loader": "^8.0.17",
     "ts-node": "^9.1.1",
     "tslib": "^2.1.0",
     "typescript": "^4.1.5",
-    "webpack": "^4.13.0",
-    "webpack-cli": "^3.0.8"
+    "webpack": "^5.105.4",
+    "webpack-cli": "^7.0.2"
   },
   "dependencies": {
-    "@babel/runtime": "^7.13.9",
-    "cross-fetch": "^3.0.6",
     "hive-uri": "^0.2.4"
   }
 }
