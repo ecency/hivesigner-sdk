@@ -29,12 +29,13 @@ describe('PKCE helpers', () => {
 	})
 
 	it('says why when Web Crypto is missing', async () => {
-		const saved = (globalThis as any).crypto
-		;(globalThis as any).crypto = undefined
+		const g = globalThis as any
+		const saved = g.crypto
+		g.crypto = undefined
 		try {
 			await expect(createPkcePair()).rejects.toThrow(/Web Crypto/)
 		} finally {
-			;(globalThis as any).crypto = saved
+			g.crypto = saved
 		}
 	})
 
