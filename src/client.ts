@@ -1,4 +1,4 @@
-import { CallbackFunction, ClientConfig, LoginOptions, Operation, SendResponse } from './types'
+import { CallbackFunction, ClientConfig, LoginOptions, Operation, SendResponse, TokenResponse } from './types'
 import { API_URL, BASE_URL } from './consts'
 import { isBrowser } from './utilities'
 
@@ -56,7 +56,12 @@ export class Client {
 		return this
 	}
 
-	public getLoginURL(state: string, account?: string): string {
+	/**
+	 * The authorize URL. Pass `options.codeChallenge` (from createPkcePair) to
+	 * protect a code flow sign-in with PKCE, which a native app needs for a
+	 * custom scheme callback such as `myapp://callback`.
+	 */
+	public getLoginURL(state: string, account?: string, options: { codeChallenge?: string } = {}): string {
 		const redirectUri = encodeURIComponent(this.callbackURL)
 		let loginURL = `${BASE_URL}/oauth2/authorize?client_id=${this.app}&redirect_uri=${redirectUri}`
 		if (this.responseType === 'code') {
@@ -71,14 +76,33 @@ export class Client {
 		if (account) {
 			loginURL += `&account=${encodeURIComponent(account)}`
 		}
+		if (options.codeChallenge) {
+			loginURL += `&code_challenge=${encodeURIComponent(options.codeChallenge)}&code_challenge_method=S256`
+		}
 		return loginURL
 	}
 
 	public login(options: LoginOptions): void {
 		if (isBrowser()) {
 			// @ts-ignore
-			window.location = this.getLoginURL(options.state)
+			window.location = this.getLoginURL(options.state, undefined, { codeChallenge: options.codeChallenge })
 		}
+	}
+
+	/**
+	 * Exchange a code for tokens at /api/oauth2/token. With PKCE send the
+	 * verifier; a native app sends no secret and gets no refresh token. A
+	 * server may pass its client secret as well.
+	 *
+	 * Sent WITHOUT the Authorization header: the API reads that header before
+	 * the body, so a token this client already holds would be read instead of
+	 * the code.
+	 */
+	public async exchangeCode(code: string, codeVerifier?: string, clientSecret?: string): Promise<TokenResponse> {
+		const body: Record<string, string> = { code }
+		if (codeVerifier) body.code_verifier = codeVerifier
+		if (clientSecret) body.client_secret = clientSecret
+		return (await this.makeRequest(`${this.apiURL}/api/oauth2/token`, 'POST', body, false)) as unknown as TokenResponse
 	}
 
 	public me(): Promise<SendResponse>
@@ -290,7 +314,7 @@ export class Client {
 		return this.send('broadcast', 'POST', { operations }, cb)
 	}
 
-	private async makeRequest(url: string, method: string, body: any): Promise<SendResponse> {
+	private async makeRequest(url: string, method: string, body: any, withToken = true): Promise<SendResponse> {
 		if (typeof globalThis.fetch !== 'function') {
 			throw new Error(
 				'hivesigner: fetch is not available. Node.js 18+ or a modern browser is required. ' +
@@ -302,7 +326,7 @@ export class Client {
 			headers: {
 				Accept: 'application/json, text/plain, */*',
 				'Content-Type': 'application/json',
-				Authorization: this.accessToken,
+				...(withToken ? { Authorization: this.accessToken } : {}),
 			},
 			body: JSON.stringify(body),
 		})
