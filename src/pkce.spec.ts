@@ -61,6 +61,12 @@ describe('Client with PKCE', () => {
 		expect(url.searchParams.get('response_type')).toBe('code')
 	})
 
+	it('adds no challenge to a token flow URL, where it means nothing', () => {
+		const c = client()
+		c.responseType = 'token'
+		expect(c.getLoginURL('st', undefined, { codeChallenge: CHALLENGE })).not.toContain('code_challenge')
+	})
+
 	it('leaves the login URL as it was without a challenge', () => {
 		const url = client().getLoginURL('st')
 		expect(url).not.toContain('code_challenge')

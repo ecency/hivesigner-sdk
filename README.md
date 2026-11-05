@@ -105,7 +105,7 @@ const link = client.getLoginURL(state, undefined, { codeChallenge });
 // open link, then on myapp://callback?code=CODE&state=STATE:
 const { access_token, username } = await client.exchangeCode(code, codeVerifier);
 ```
-The code can be exchanged once, within 10 minutes, and only with the verifier. A native app gets no refresh token. A server can pass its client secret as the third argument of `exchangeCode`. Needs Web Crypto (Node.js 20+ or a modern browser). Full guide: https://hivesigner.com/docs/pkce
+The code can be exchanged once, within 10 minutes, and only with the verifier. A native app gets no refresh token. A server can pass its client secret as the third argument of `exchangeCode`. `createPkcePair` needs Web Crypto: Node.js 20+ or a modern browser. In React Native, add a `crypto.getRandomValues` and `crypto.subtle` polyfill, or make the pair with a native library and pass the challenge to `getLoginURL`. The rest of the SDK still runs on Node.js 18. Full guide: https://hivesigner.com/docs/pkce
 
 ### Get user profile
 Once a user is logged in to your app you can call the following method to get the details of their account:
