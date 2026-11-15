@@ -1,10 +1,12 @@
 [![npm](https://img.shields.io/npm/v/hivesigner.svg)](https://www.npmjs.com/package/hivesigner)
 ![npm](https://img.shields.io/npm/dm/hivesigner.svg)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/ecency/hivesigner-sdk/master/LICENSE)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/ecency/hivesigner-sdk/blob/main/LICENSE)
 
 # HiveSigner SDK
 
-The official HiveSigner JavaScript SDK, written in Typescript. Library supports both callback and promise functions. Learn more about integration: https://hivesigner.com/docs.
+The official HiveSigner JavaScript SDK, written in Typescript. Library supports both callback and promise functions.
+
+Documentation lives at **[hivesigner.com/docs](https://hivesigner.com/docs)**, with a page for this SDK at [hivesigner.com/docs/sdk](https://hivesigner.com/docs/sdk).
 
 ## Upgrading to v4
 
@@ -38,18 +40,23 @@ npm i hivesigner --save
 You can create an index.html file and include HiveSigner.js with:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/hivesigner"></script>
+<script src="https://cdn.jsdelivr.net/npm/hivesigner@4/lib/hivesigner.min.js"></script>
 ```
 or
 ```html
-  <script src="https://unpkg.com/hivesigner@latest/dist/hivesigner.min.js"></script>
+<script src="https://unpkg.com/hivesigner@4/lib/hivesigner.min.js"></script>
 ```
 
 ### Usage
 
-For general information about HiveSigner and setting up your app you can checkout the developer documentation.
+Start with the developer documentation on hivesigner.com:
 
-**[Developers documentation](https://hivesigner.com/docs)**
+- [Register your app](https://hivesigner.com/docs/register-app): the app account, its callbacks, client secret and the posting authority it needs.
+- [Sign in with OAuth2](https://hivesigner.com/docs/oauth2): the authorize URL, [scopes](https://hivesigner.com/docs/oauth2#scopes), and the token and code flows.
+- [PKCE for mobile and desktop apps](https://hivesigner.com/docs/pkce): the code flow for apps that cannot keep a secret.
+- [Tokens](https://hivesigner.com/docs/tokens): what a token contains, how long it lasts and how your server checks one.
+- [REST API](https://hivesigner.com/docs/api), [sign links](https://hivesigner.com/docs/sign-links) and [message signing](https://hivesigner.com/docs/message-signing).
+- [SDKs](https://hivesigner.com/docs/sdk) and the [FAQ](https://hivesigner.com/docs/faq).
 
 ## SDK methods
 
@@ -65,10 +72,10 @@ var client = new hivesigner.Client({
 });
 ```
 Parameters:
-- __app__: This is the username of the app that was registered in the HiveSigner dashboard
+- __app__: This is the username of the app account [registered with HiveSigner](https://hivesigner.com/docs/register-app)
 - __callbackURL__: This is the URL that users will be redirected to after interacting with HiveSigner. It must be listed in the "Redirect URI(s)" list in the app settings EXACTLY the same as it is specified here
 - __accessToken__: If you have an oauth2 access token for this user already you can specify it here, otherwise you can leave it and set it later using hivesigner.setAccessToken(accessToken).
-- __scope__: This is a list of operations the app will be able to access on the user's account. For a complete list of scopes see: [https://github.com/ledgerconnect/hivesigner/wiki/OAuth-2#scopes](https://github.com/ledgerconnect/hivesigner/wiki/OAuth-2#scopes)
+- __scope__: This is a list of operations the app will be able to access on the user's account. For a complete list of scopes see [Scopes](https://hivesigner.com/docs/oauth2#scopes).
 
 ### Login
 
@@ -89,7 +96,7 @@ Parameters:
 - __select_account__: Optional, username selection/detection from Hivesigner UI, if username already imported
 
 After logging in, HiveSigner will redirect the user to the "redirect_uri" specified in the login url above and add the following query string parameters for your app to use:
-- __access_token__: This is the oauth2 access token that is required to make any Hive API calls on behalf of the current user. Once you have this you need to tell the HiveSigner.js to use it by either specifying it as a parameter to the init() method call or by calling sc2.setAccessToken([accessToken]).
+- __access_token__: This is the oauth2 access token that is required to make any Hive API calls on behalf of the current user. Once you have this you need to tell the HiveSigner.js to use it by either passing it as `accessToken` to the `Client` constructor or by calling `client.setAccessToken(accessToken)`.
 - __expires_in__: The number of seconds until the access token expires.
 - __username__: The username of the current user.
 
@@ -105,7 +112,7 @@ const link = client.getLoginURL(state, undefined, { codeChallenge });
 // open link, then on myapp://callback?code=CODE&state=STATE:
 const { access_token, username } = await client.exchangeCode(code, codeVerifier);
 ```
-The code can be exchanged once, within 10 minutes, and only with the verifier. A native app gets no refresh token. A server can pass its client secret as the third argument of `exchangeCode`. `createPkcePair` needs Web Crypto: Node.js 20+ or a modern browser. In React Native, add a `crypto.getRandomValues` and `crypto.subtle` polyfill, or make the pair with a native library and pass the challenge to `getLoginURL`. The rest of the SDK still runs on Node.js 18. Full guide: https://hivesigner.com/docs/pkce
+The code can be exchanged once, within 10 minutes, and only with the verifier. A native app gets no refresh token. A server can pass its client secret as the third argument of `exchangeCode`. `createPkcePair` needs Web Crypto: Node.js 20+ or a modern browser. In React Native, add a `crypto.getRandomValues` and `crypto.subtle` polyfill, or make the pair with a native library and pass the challenge to `getLoginURL`. The rest of the SDK still runs on Node.js 18. Full guide: [hivesigner.com/docs/pkce](https://hivesigner.com/docs/pkce).
 
 ### Get user profile
 Once a user is logged in to your app you can call the following method to get the details of their account:
