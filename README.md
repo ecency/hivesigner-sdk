@@ -76,6 +76,7 @@ Parameters:
 - __callbackURL__: This is the URL that users will be redirected to after interacting with HiveSigner. It must be listed in the "Redirect URI(s)" list in the app settings EXACTLY the same as it is specified here
 - __accessToken__: If you have an oauth2 access token for this user already you can specify it here, otherwise you can leave it and set it later using hivesigner.setAccessToken(accessToken).
 - __scope__: This is a list of operations the app will be able to access on the user's account. For a complete list of scopes see [Scopes](https://hivesigner.com/docs/oauth2#scopes).
+- __timeout__: Optional. Milliseconds to wait for an answer from the API. A call that gets none fails with a `TimeoutError`, through the promise or the callback, and the request is cancelled. No limit when unset. Change it later with `client.setTimeout(ms)`.
 
 ### Login
 
