@@ -488,6 +488,21 @@ describe('Client', function () {
 			await expect(instance.me()).resolves.toStrictEqual(await fetchResponseMock.json())
 		})
 
+		it('fails a body that cannot be serialized once, and leaves no timer behind', async function () {
+			const unhandled = jest.fn()
+			process.on('unhandledRejection', unhandled)
+			try {
+				instance.setTimeout(20)
+				const circular: any = {}
+				circular.self = circular
+				await expect(instance.send('broadcast', 'POST', circular)).rejects.toBeInstanceOf(TypeError)
+				await new Promise((resolve) => setTimeout(resolve, 60))
+				expect(unhandled).not.toHaveBeenCalled()
+			} finally {
+				process.off('unhandledRejection', unhandled)
+			}
+		})
+
 		it('cancels the request itself where AbortController exists', async function () {
 			const aborted = jest.fn()
 			class FakeAbortController {

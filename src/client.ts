@@ -334,7 +334,9 @@ export class Client {
 				'If you are in an older environment, provide a global fetch polyfill.'
 			)
 		}
-		const request = (signal?: AbortSignal) => globalThis.fetch(url, {
+		// async, so a synchronous failure (a body that cannot be serialized)
+		// becomes a rejection that the timeout path below settles and cleans up.
+		const request = async (signal?: AbortSignal) => globalThis.fetch(url, {
 			method,
 			headers: {
 				Accept: 'application/json, text/plain, */*',
