@@ -1,0 +1,72 @@
+name: CI and release
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+      - run: yarn lint
+      - run: yarn test
+      # lib/ is committed and is what npm ships. A source change merged without
+      # a rebuild would publish stale code, so the build must reproduce it.
+      - name: Build and check lib/ is up to date
+        run: |
+          yarn build
+          if [ -n "$(git status --porcelain -- lib)" ]; then
+            git status --short -- lib
+            echo "lib/ is out of date: run 'yarn build' and commit the result"
+            exit 1
+          fi
+
+  # Publishes when package.json names a version npm does not have yet, so a
+  # release is "bump the version in a PR and merge". A merge without a bump
+  # publishes nothing; a failed publish is retried by the next merge.
+  release:
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: npm-release
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      id-token: write # npm trusted publishing (OIDC): no npm token is stored anywhere
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      - name: Is this version on npm yet?
+        id: check
+        run: |
+          NAME=$(node -p "require('./package.json').name")
+          VERSION=$(node -p "require('./package.json').version")
+          if npm view "$NAME@$VERSION" version >/dev/null 2>&1; then
+            echo "$NAME@$VERSION is already published"
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "will publish $NAME@$VERSION"
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.check.outputs.publish == 'true'
+        run: yarn install --frozen-lockfile
+      - if: steps.check.outputs.publish == 'true'
+        run: yarn build
+      # npm 11, not latest: npm 12.0.0 broke provenance under OIDC
+      # ("Cannot find module 'sigstore'").
+      - if: steps.check.outputs.publish == 'true'
+        run: npx -y npm@11 publish --provenance --access public
