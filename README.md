@@ -93,6 +93,20 @@ After logging in, HiveSigner will redirect the user to the "redirect_uri" specif
 - __expires_in__: The number of seconds until the access token expires.
 - __username__: The username of the current user.
 
+### Mobile and desktop apps: PKCE
+An app that cannot keep a client secret (a mobile or desktop app) uses the code flow with PKCE. It may then use its own scheme as the callback, such as `myapp://callback`, registered on its app account.
+```js
+import { Client, createPkcePair } from 'hivesigner';
+
+const client = new Client({ app: 'myapp', callbackURL: 'myapp://callback', responseType: 'code', scope: ['posting'] });
+
+const { codeVerifier, codeChallenge } = await createPkcePair(); // keep codeVerifier in memory
+const link = client.getLoginURL(state, undefined, { codeChallenge });
+// open link, then on myapp://callback?code=CODE&state=STATE:
+const { access_token, username } = await client.exchangeCode(code, codeVerifier);
+```
+The code can be exchanged once, within 10 minutes, and only with the verifier. A native app gets no refresh token. A server can pass its client secret as the third argument of `exchangeCode`. `createPkcePair` needs Web Crypto: Node.js 20+ or a modern browser. In React Native, add a `crypto.getRandomValues` and `crypto.subtle` polyfill, or make the pair with a native library and pass the challenge to `getLoginURL`. The rest of the SDK still runs on Node.js 18. Full guide: https://hivesigner.com/docs/pkce
+
 ### Get user profile
 Once a user is logged in to your app you can call the following method to get the details of their account:
 ```

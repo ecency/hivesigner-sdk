@@ -1,4 +1,4 @@
-import { CallbackFunction, ClientConfig, LoginOptions, Operation, SendResponse } from './types';
+import { CallbackFunction, ClientConfig, LoginOptions, Operation, SendResponse, TokenResponse } from './types';
 export declare class Client {
     apiURL: string;
     app: string;
@@ -14,8 +14,25 @@ export declare class Client {
     setAccessToken(accessToken: string): this;
     removeAccessToken(): this;
     setScope(scope: string[]): this;
-    getLoginURL(state: string, account?: string): string;
+    /**
+     * The authorize URL. Pass `options.codeChallenge` (from createPkcePair) to
+     * protect a code flow sign-in with PKCE, which a native app needs for a
+     * custom scheme callback such as `myapp://callback`.
+     */
+    getLoginURL(state: string, account?: string, options?: {
+        codeChallenge?: string;
+    }): string;
     login(options: LoginOptions): void;
+    /**
+     * Exchange a code for tokens at /api/oauth2/token. With PKCE send the
+     * verifier; a native app sends no secret and gets no refresh token. A
+     * server may pass its client secret as well.
+     *
+     * Sent WITHOUT the Authorization header: the API reads that header before
+     * the body, so a token this client already holds would be read instead of
+     * the code.
+     */
+    exchangeCode(code: string, codeVerifier?: string, clientSecret?: string): Promise<TokenResponse>;
     me(): Promise<SendResponse>;
     me(cb: CallbackFunction): Promise<SendResponse>;
     decode(memo: string): Promise<SendResponse>;

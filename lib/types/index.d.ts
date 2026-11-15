@@ -4,3 +4,4 @@ export * from './callback-function.type';
 export * from './login-options.interface';
 export * from './send-response.type';
 export * from './hive.types';
+export * from './token-response.interface';
