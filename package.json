@@ -1,9 +1,12 @@
 {
   "name": "hivesigner",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "Hivesigner SDK",
   "main": "./lib/index",
   "types": "./lib/index",
+  "files": [
+    "lib"
+  ],
   "scripts": {
     "build": "rimraf lib && webpack && rollup -c rollup.config.js && tsc --emitDeclarationOnly",
     "test": "npx jest",
