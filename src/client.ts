@@ -9,6 +9,7 @@ export class Client {
 	public scope: string[]
 	public responseType: string
 	public accessToken?: string
+	public timeout?: number
 
 	constructor(config: ClientConfig) {
 		this.apiURL = config.apiURL || API_URL
@@ -17,6 +18,7 @@ export class Client {
 		this.accessToken = config.accessToken
 		this.scope = config.scope
 		this.responseType = config.responseType
+		this.timeout = config.timeout
 	}
 
 	public setBaseURL(): this {
@@ -53,6 +55,16 @@ export class Client {
 
 	public setScope(scope: string[]): this {
 		this.scope = scope
+		return this
+	}
+
+	/**
+	 * Abort an API call that has not answered after `ms` milliseconds; the call
+	 * then rejects (or calls back) with a `TimeoutError`. Pass `undefined` for
+	 * no limit, the default.
+	 */
+	public setTimeout(ms?: number): this {
+		this.timeout = ms
 		return this
 	}
 
@@ -322,7 +334,7 @@ export class Client {
 				'If you are in an older environment, provide a global fetch polyfill.'
 			)
 		}
-		const response = await globalThis.fetch(url, {
+		const request = (signal?: AbortSignal) => globalThis.fetch(url, {
 			method,
 			headers: {
 				Accept: 'application/json, text/plain, */*',
@@ -330,9 +342,37 @@ export class Client {
 				...(withToken ? { Authorization: this.accessToken } : {}),
 			},
 			body: JSON.stringify(body),
-		})
+			...(signal ? { signal } : {}),
+		}).then(async (res) => ({ response: res, json: await res.json() }))
 
-		const json = await response.json()
+		let response: Response
+		let json: any
+		if (!this.timeout) {
+			({ response, json } = await request())
+		} else {
+			// The call is raced against a timer, so it fails on time even where
+			// AbortController is missing; where it exists, the request itself is
+			// cancelled too. Not AbortSignal.timeout: React Native and older
+			// browsers lack it.
+			const ms = this.timeout
+			const controller = typeof AbortController === 'function' ? new AbortController() : undefined
+			let timer: ReturnType<typeof setTimeout> | undefined
+			const expired = new Promise<never>((_resolve, reject) => {
+				timer = setTimeout(() => {
+					const error = new Error(`hivesigner: no answer from the API within ${ms} ms`)
+					error.name = 'TimeoutError'
+					reject(error)
+					controller?.abort()
+				}, ms)
+			})
+			const call = request(controller?.signal)
+			call.catch(() => undefined) // its rejection after an abort is already answered
+			try {
+				({ response, json } = await Promise.race([call, expired]))
+			} finally {
+				clearTimeout(timer)
+			}
+		}
 
 		if (response.status !== 200 || json.error) {
 			throw json

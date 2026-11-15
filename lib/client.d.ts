@@ -6,6 +6,7 @@ export declare class Client {
     scope: string[];
     responseType: string;
     accessToken?: string;
+    timeout?: number;
     constructor(config: ClientConfig);
     setBaseURL(): this;
     setApiURL(url: string): this;
@@ -14,6 +15,12 @@ export declare class Client {
     setAccessToken(accessToken: string): this;
     removeAccessToken(): this;
     setScope(scope: string[]): this;
+    /**
+     * Abort an API call that has not answered after `ms` milliseconds; the call
+     * then rejects (or calls back) with a `TimeoutError`. Pass `undefined` for
+     * no limit, the default.
+     */
+    setTimeout(ms?: number): this;
     /**
      * The authorize URL. Pass `options.codeChallenge` (from createPkcePair) to
      * protect a code flow sign-in with PKCE, which a native app needs for a

@@ -450,4 +450,62 @@ describe('Client', function () {
 		})
 		expect(response).toBeTruthy()
 	})
+
+	describe('timeout', function () {
+		// A fetch that, like the real one, never answers on its own and rejects
+		// when its signal aborts.
+		const hangingFetch = () => jest.fn().mockImplementation((_url: string, init: any) => new Promise((_resolve, reject) => {
+			init?.signal?.addEventListener('abort', () => reject(Object.assign(new Error('aborted'), { name: 'AbortError' })))
+		}))
+
+		it('sends no signal when no timeout is set, as before', async function () {
+			await instance.send('me', 'POST', {})
+			expect(fetchMock.mock.calls[0][1].signal).toBeUndefined()
+		})
+
+		it('aborts a call that takes longer than the timeout from the config', async function () {
+			global.fetch = hangingFetch()
+			const client = new Client({ app: 'test-app', accessToken: 'test-access-token', timeout: 20 })
+			await expect(client.me()).rejects.toMatchObject({ name: 'TimeoutError' })
+		})
+
+		it('aborts a call that takes longer than a timeout set later, and reports it to a callback', async function () {
+			global.fetch = hangingFetch()
+			expect(instance.setTimeout(20)).toBe(instance)
+			const callback = jest.fn()
+			await instance.me(callback)
+			expect(callback).toHaveBeenCalledWith(expect.objectContaining({ name: 'TimeoutError' }), null)
+		})
+
+		it('applies to the code exchange too', async function () {
+			global.fetch = hangingFetch()
+			instance.setTimeout(20)
+			await expect(instance.exchangeCode('code', 'verifier')).rejects.toMatchObject({ name: 'TimeoutError' })
+		})
+
+		it('does not abort a call that answers in time', async function () {
+			instance.setTimeout(1000)
+			await expect(instance.me()).resolves.toStrictEqual(await fetchResponseMock.json())
+		})
+
+		it('cancels the request itself where AbortController exists', async function () {
+			const aborted = jest.fn()
+			class FakeAbortController {
+				signal = { addEventListener: (_type: string, fn: () => void) => { this.listeners.push(fn) } }
+				listeners: (() => void)[] = []
+				abort() { aborted(); this.listeners.forEach((fn) => fn()) }
+			}
+			const original = (global as any).AbortController
+			;(global as any).AbortController = FakeAbortController
+			try {
+				global.fetch = hangingFetch()
+				instance.setTimeout(20)
+				await expect(instance.me()).rejects.toMatchObject({ name: 'TimeoutError' })
+				expect((global.fetch as jest.Mock).mock.calls[0][1].signal).toBeDefined()
+				expect(aborted).toHaveBeenCalledTimes(1)
+			} finally {
+				;(global as any).AbortController = original
+			}
+		})
+	})
 })
