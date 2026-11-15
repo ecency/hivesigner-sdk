@@ -5,4 +5,6 @@ export interface ClientConfig {
 	scope?: string[]
 	responseType?: string
 	accessToken?: string
+	/** Abort an API call that has not answered after this many milliseconds. No limit when unset. */
+	timeout?: number
 }
